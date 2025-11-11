@@ -1,30 +1,118 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/recipe-v1.json
 # image will be published to ghcr.io/<user>/<name>
-name: template
+name: phlos
 # description will be included in the image's metadata
-description: This is my personal OS image.
+description: This is my personal OS image based on Bazzite using BlueBuild.
 
 # the base image to build on top of (FROM) and the version tag to use
-base-image: ghcr.io/ublue-os/silverblue-main
-image-version: 42 # latest is also supported if you want new updates ASAP
+base-image: ghcr.io/ublue-os/bazzite-dx-gnome
+image-version: stable # latest is also supported if you want new updates ASAP
 
 # module configuration, executed in order
 # you can include multiple instances of the same module
 modules:
+
   - type: files
     files:
+      # copies `files/system/*` (* means everything inside it) into your image's root folder `/`
       - source: system
-        destination: / # copies files/system/* (* means everything inside it) into your image's root folder /
+        destination: /
+      # copies `files/my-image/usr/*` to `/usr/` inside the image
+      # - source: my-image/usr
+      #   destination: /usr
+
+  - type: justfiles
+    # validate: true
+    # By default, the module will import all files with names ending in .just from files/justfiles/.
+    # include:
+    #   - common
+    #   - gnome/monitors.just
+    #   - shared/flatpak/fix-theming.just
+    #   - justfile1.just
+
+  - type: chezmoi
+    repository: "https://github.com/arcdablid/dotfiles" # my dotfiles repo
+    # all-users: false # make users have to enable chezmoi manually
+    # file-conflict-policy: replace # override changed files with those from the repo
 
   - type: dnf
     repos:
+      keys:
+        - https://linux.teamviewer.com/pubkey/currentkey.asc
       copr:
         - atim/starship
+        - scottames/ghostty
     install:
+      skip-unavailable: true # skip unavailable packages
       packages:
-        - micro
         - starship
+        - ghostty
+
+        - xonsh
+        - elvish
+        - nu
+        - fish
+        - zsh
+
+        - pipx
+        - python3-pip
+        - uv # An extremely fast Python package installer and resolver, written in Rust
+        - ruff # Extremely fast Python linter and code formatter
+        - cargo
+
+        - micro
+        - bat
+        - fzf
+        - util-linux
+        - aria2
+        - thefuck
+        - btop
+        - direnv
+        - eza
+        - gh
+        - rclone
+        - ripgrep
+        - ugrep # A more powerful, ultra fast, user-friendly, compatible grep | https://github.com/Genivia/ugrep
+        - yq
+        - jq
+        - zoxide
+        - just
+        - cheat # Help for various commands and their use cases
+        - tealdeer # Fetch and show tldr help pages for many CLI commands
+        - nnn # Terminal file browser | https://github.com/jarun/nnn
+
+        - mpv
+        - vlc-plugin-bittorrent
+        - vlc-plugin-ffmpeg
+        - vlc-plugin-pause-click
+        - vlc
+
+        - qemu-kvm
+        - virt-manager
+        - virt-viewer
+        - virt-install
+
+        - podman-tui # terminal user interface for Podman
+        - podlet # Generate Podman Quadlet files from a Podman command, compose file, or existing object.
+        - podman-compose # Run docker-compose.yml using podman
+        - udica # A tool for generating SELinux security policies for containers | https://github.com/containers/udica
+        - skopeo # A command line utility that performs various operations on container images and image repositories | https://github.com/containers/skopeo
+        - cosign # A tool for setting up container signing using Sigstore | https://github.com/sigstore/cosign
+
+        - ansible
+
+        - gparted
+
+        - nmap
+        - wireshark
+
+        - gnome-shell-theme-yaru  # Yaru GNOME Shell Theme
+        - yaru-icon-theme         # Yaru icon theme
+        - yaru-sound-theme        # Yaru sound theme
+        - yaru-theme              # Ubuntu community theme yaru
+
+        - https://download.teamviewer.com/download/linux/teamviewer.x86_64.rpm
     remove:
       packages:
         # example: removing firefox (in favor of the flatpak)
@@ -34,12 +122,162 @@ modules:
 
   - type: default-flatpaks
     configurations:
-      - notify: true # Send notification after install/uninstall is finished (true/false)
-        scope: system
         # If no repo information is specified, Flathub will be used by default
-        install: # system flatpaks we want all users to have and not remove
+
+      - scope: system
+        install:
+          - com.github.tchx84.Flatseal
+          - io.github.fabrialberio.pinapp
+
           - org.mozilla.firefox
-          - org.gnome.Loupe
+          - app.zen_browser.zen
+          - io.github.ungoogled_software.ungoogled_chromium
+          - org.torproject.torbrowser-launcher
+
+          - com.github.k4zmu2a.spacecadetpinball
+          - org.gnome.Mahjongg
+
+          - io.github.alainm23.planify # Project/task manager
+
+          - org.libreoffice.LibreOffice
+          - com.github.jeromerobert.pdfarranger
+
+          - io.github.peazip.PeaZip
+          - de.leopoldluley.Clapgrep
+
+          - com.github.marhkb.Pods
+          - com.ranfdev.DistroShelf
+          - com.usebottles.bottles
+          - io.github.flattool.Warehouse
+          - io.podman_desktop.PodmanDesktop
+          - it.mijorus.gearlever
+
+          - io.github.getnf.embellish # Embellish | User-friendly application designed for managing Nerd Fonts on your system.
+          - org.gustavoperedo.FontDownloader
+
+          - page.kramo.Sly
+          - com.github.PintaProject.Pinta
+          - org.gimp.GIMP
+          - org.upscayl.Upscayl
+          - io.github.tobagin.scramble
+          - fr.handbrake.ghb
+          - org.freecad.FreeCAD
+          - org.gnome.Decibels
+          - org.bunkus.mkvtoolnix-gui
+          - com.obsproject.Studio
+          - be.alexandervanhee.gradia # Annotate your screenshots
+
+          - io.github.mhogomchungu.media-downloader
+          - io.freetubeapp.FreeTube
+          - org.kde.plasmatube
+          - org.nickvision.tubeconverter
+
+          - com.github.zocker_160.SyncThingy
+          - app.drey.Warp
+          - org.localsend.localsend_app
+          - org.onionshare.OnionShare
+          - org.qbittorrent.qBittorrent
+          - io.github.giantpinkrobots.varia
+
+          - org.signal.Signal
+          - org.gnome.Fractal # A Matrix messaging app for GNOME written in Rust
+
+          - com.rustdesk.RustDesk
+          - io.github.input_leap.input-leap
+          - org.deskflow.deskflow
+
+          - org.fkoehler.KTailctl
+          - io.github.justinrdonnelly.bouncer # Bouncer | An application to choose the correct firewall zone for wireless connections.
+
+          - org.keepassxc.KeePassXC
+
+          - org.nmap.Zenmap
+          - de.swsnr.turnon # Turn On | Conveniently turn on devices in your network, such as a NAS or a gaming console, using Wake On LAN (WoL).
+
+          - io.github.BuddySirJava.SSH-Studio
+          - io.github.mfat.sshpilot
+          - io.github.plrigaux.sysd-manager
+
+          - me.iepure.devtoolbox
+          - org.gnome.meld
+          - org.zealdocs.Zeal
+          - dev.mufeed.Wordbook # Wordbook | An offline English-English dictionary application powered by WordNet and eSpeak.
+
+          - io.gitlab.adhami3310.Impression
+          - org.fedoraproject.MediaWriter
+          - io.github.pwr_solaar.solaar
+          - org.kde.skanpage
+          - com.github.wwmm.easyeffects
+          - com.belmoussaoui.Decoder
+
+          - com.jeffser.Alpaca
+          - com.jeffser.Alpaca.Plugins.Ollama
+          - com.jeffser.Alpaca.Plugins.AMD
+
       - scope: user # Also add Flathub user repo, but no user packages
 
+  - type: brew
+    # nofile-limits: true # increase nofile limits
+    brew-analytics: false # disable telemetry
+
+  - type: fonts
+    fonts:
+      nerd-fonts:
+        - FiraCode # don't add spaces or "Nerd Font" suffix
+        - Hack
+        - SourceCodePro
+      google-fonts:
+        - Roboto
+        - Open Sans
+        - Inter
+      # url-fonts:
+      #   - name: CustomFont
+      #     url: https://example.com/my-font.otf
+      #   - name: CompanyFonts
+      #     url: https://company.com/fonts.tar.gz
+
+  - type: gnome-extensions
+    install:
+      # - Night Theme Switcher
+      # - Blur my Shell # Notice how extension is named "Blur my Shell" & not "Blur My Shell"?
+      #                 # Name is case-sensitive, so check if extension name is typed correctly
+      # - AppIndicator and KStatusNotifierItem Support
+      # - 307 # Dash-to-Dock
+      #       # https://extensions.gnome.org/extension/307/dash-to-dock/
+      #       # You can also specify PK ID number from the extension URL,
+      #       # if you encounter the scenario where there are multiple extensions with the same name.
+      #       # You don't need to look & search for this scenario, since module will automatically fail & inform you to put PK ID number instead
+      - 1160 # Dash to Panel | https://github.com/home-sweet-gnome/dash-to-panel
+      - 1460 # Vitals | https://github.com/corecoding/Vitals
+      - 5470 # Weather O'Clock | https://github.com/CleoMenezesJr/weather-oclock
+    # uninstall:
+    #   - GSConnect # Uninstall step here should be used only for the extensions
+    #               # which are not installed through OS package manager in the base image,
+    #               # like extensions installed from gnome-extensions module
+
+  - type: bling
+    install:
+      - dconf-update-service # a service unit that updates the dconf db on boot
+      - gnome-vrr # enables gnome-vrr for your image
+
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
+
+  - type: systemd
+    # this example disables automatic flatpak updates and enables a custom service unit for all users
+    system:
+      enabled:
+        - podman.socket
+    #   disabled:
+    #     - flatpak-system-update.timer
+    # user:
+    #   enabled:
+    #     - my-custom.service
+    #   disabled:
+    #     - flatpak-user-update.timer
+
+  - type: script
+    # snippets:
+    #   - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
+    #   - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
+    scripts:
+      - virtualbox.sh # example: run files/scripts/myscript.sh
