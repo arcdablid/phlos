@@ -255,10 +255,10 @@ modules:
     #               # which are not installed through OS package manager in the base image,
     #               # like extensions installed from gnome-extensions module
 
-  - type: bling
-    install:
-      - dconf-update-service # a service unit that updates the dconf db on boot
-      - gnome-vrr # enables gnome-vrr for your image
+  # - type: bling
+  #   install:
+  #     - dconf-update-service # a service unit that updates the dconf db on boot
+  #     - gnome-vrr # enables gnome-vrr for your image
 
   - type: signing # this sets up the proper policy & signing files for signed images to work fully
 
