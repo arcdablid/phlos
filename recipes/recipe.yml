@@ -49,38 +49,80 @@ modules:
         - starship
         - ghostty
 
-        - xonsh
+        - xonsh # Python-powered, cross-platform, Unix-gazing shell language and command prompt | https://xon.sh/
         - elvish
         - nu
         - fish
         - zsh
 
+        - shellcheck # Shell script analysis tool | https://github.com/koalaman/shellcheck
+        - direnv # Load/unload environment variables based on $PWD | https://direnv.net/
+        - parallel # Shell command parallelization utility | https://savannah.gnu.org/projects/parallel/
+        - just
+        - cheat # Help for various commands and their use cases
+        - tealdeer # Very fast implementation of tldr in Rust | https://github.com/dbrgn/tealdeer
+
         - pipx
         - python3-pip
         - uv # An extremely fast Python package installer and resolver, written in Rust
         - ruff # Extremely fast Python linter and code formatter
+        - isort # Sort Python imports automatically | https://pycqa.github.io/isort/
+        - black # Python code formatter | https://black.readthedocs.io/en/stable/
+
         - cargo
 
+        - git
         - micro
-        - bat
-        - fzf
+        - bat # Clone of cat(1) with syntax highlighting and Git integration | https://github.com/sharkdp/bat
+        - moar # Nice to use pager for humans | https://github.com/walles/moar
+        - sd # Intuitive find & replace CLI | https://github.com/chmln/sd
+        - fzf # Command-line fuzzy finder written in Go | https://github.com/junegunn/fzf
         - util-linux
-        - aria2
+        - age # File encryption tool | https://github.com/FiloSottile/age
+        - httpie # User-friendly cURL replacement (command-line HTTP client) | https://httpie.io/
+        - aria2 #Download with resuming and segmented downloading | https://aria2.github.io/
+        - mosh # Mobile shell (ssh replacement) - https://mosh.org/
+        - gitui # Blazing fast terminal-ui for git written in rust | https://github.com/extrawurst/gitui
         - thefuck
-        - btop
-        - direnv
-        - eza
-        - gh
+        - glances # Alternative to top/htop | https://nicolargo.github.io/glances/
+        - iftop # Display an interface's bandwidth usage | https://pdw.ex-parrot.com/iftop/
+        - iperf3 # Update of iperf: measures TCP, UDP, and SCTP bandwidth | https://github.com/esnet/iperf
+        - speedtest-cli # Command-line interface for https://speedtest.net bandwidth tests | https://github.com/sivel/speedtest-cli
+        - lsof # Utility to list open files | https://github.com/lsof-org/lsof
+        - clinfo # Print information about OpenCL platforms and devices | https://github.com/Oblomov/clinfo
+        - usbutils # List detailed info about USB devices | http://www.linux-usb.org/
+        - pciutils # PCI utilities | https://github.com/pciutils/pciutils
+        - ncdu # NCurses Disk Usage | https://dev.yorhel.nl/ncdu
+        - dust # More intuitive version of du in rust | https://github.com/bootandy/dust
+        - smartmontools # SMART hard drive monitoring | https://www.smartmontools.org/
+        - gnupg # GNU Pretty Good Privacy (PGP) package | https://gnupg.org/
+        - btop # Resource monitor. C+ homebrew_formula |"version and continuation of bashtop and bpytop | https://github.com/aristocratos/btop
+        - fd # Simple, fast and user-friendly alternative to find | https://github.com/sharkdp/fd
+        - ack # A grep-like tool tailored to working with large trees of source code | https://beyondgrep.com/
+        - eza # Modern, maintained replacement for ls | https://github.com/eza-community/eza
+        - gh # GitHub command-line tool | https://cli.github.com/
+        - glab # A GitLab CLI tool bringing GitLab to your command line | https://gitlab.com/gitlab-org/cli
         - rclone
-        - ripgrep
+        - ripgrep # A line-oriented search tool that recursively searches the current directory for a regex pattern | https://github.com/BurntSushi/ripgrep
         - ugrep # A more powerful, ultra fast, user-friendly, compatible grep | https://github.com/Genivia/ugrep
-        - yq
-        - jq
-        - zoxide
-        - just
-        - cheat # Help for various commands and their use cases
-        - tealdeer # Fetch and show tldr help pages for many CLI commands
-        - nnn # Terminal file browser | https://github.com/jarun/nnn
+        - yq # Process YAML, JSON, XML, CSV and properties documents from the CLI | https://github.com/mikefarah/yq
+        - jq # Lightweight and flexible command-line JSON processor | https://jqlang.github.io/jq/
+        - zoxide # Shell extension to navigate your filesystem faster | https://github.com/ajeetdsouza/zoxide
+        - nnn # Tiny, lightning fast, feature-packed file manager | https://github.com/jarun/nnn
+        - tree # Display directories as trees (with optional color/HTML output) | https://oldmanprogrammer.net/source.php?dir=projects/tree
+        - diffutils # File comparison utilities | https://www.gnu.org/s/diffutils/
+        - difftastic # A syntax-aware diff | https://github.com/Wilfred/difftastic
+        - glow # Render markdown on the CLI | https://github.com/charmbracelet/glow
+        - pandoc # Conversion between documentation formats | https://pandoc.org
+        - exiv2 # EXIF and IPTC metadata manipulation library and tools | https://exiv2.org/
+        - lolcat # Rainbows and unicorns in your console! | https://github.com/busyloop/lolcat
+        - cmatrix # Console Matrix | https://github.com/abishekvashok/cmatrix/
+        - qpdf
+
+
+        - stress # Tool to impose load on and stress test a computer system | https://github.com/resurrecting-open-source-projects/stress
+        - stress-ng # Stress test a computer system in various selectable ways | https://wiki.ubuntu.com/Kernel/Reference/stress-ng
+        - hyperfine # Command-line benchmarking tool | https://github.com/sharkdp/hyperfine
 
         - mpv
         - vlc-plugin-bittorrent
@@ -94,17 +136,22 @@ modules:
         - virt-install
 
         - podman-tui # terminal user interface for Podman
-        - podlet # Generate Podman Quadlet files from a Podman command, compose file, or existing object.
+        - podlet # Generate Podman Quadlet files from a Podman command, compose file, or existing object | https://crates.io/crates/podlet
         - podman-compose # Run docker-compose.yml using podman
         - udica # A tool for generating SELinux security policies for containers | https://github.com/containers/udica
         - skopeo # A command line utility that performs various operations on container images and image repositories | https://github.com/containers/skopeo
         - cosign # A tool for setting up container signing using Sigstore | https://github.com/sigstore/cosign
 
-        - ansible
+        - just # A handy way to save and run project-specific commands | https://github.com/casey/just
+        - ansible # Automate deployment, configuration, and upgrading | https://www.ansible.com/
+        - ansible-lint # Checks ansible playbooks for practices and behaviour | https://ansible-lint.readthedocs.io/
+        - butane # Translates human-readable Butane Configs into machine-readable Ignition Configs | https://github.com/coreos/butane
 
         - gparted
 
-        - nmap
+        - ipmitool # Command-line interface to IPMI-enabled devices
+        - nethogs
+        - nmap # Port scanning utility for large networks | https://nmap.org/
         - wireshark
 
         - gnome-shell-theme-yaru  # Yaru GNOME Shell Theme

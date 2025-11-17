@@ -282,7 +282,7 @@ def select_from_list(input_message: str, options: list) -> str:
 
 def delete_rfs_files(
     credentials_direcrory: str,
-    execstart_script_direcrory: str,
+    execstart_script_dir: str,
     server_name: str,
     share_name: str,
     share_mount_under: str,
@@ -326,11 +326,11 @@ def delete_rfs_files(
     ):
         print(f"{ptc.Blue}[INFO]{ptc.Color_Off} Removed /var/lib/{systemd_name}.env")
     if exec_cmd(
-        f"sudo rm -vf {execstart_script_direcrory}/{systemd_name}.sh",
+        f"sudo rm -vf {execstart_script_dir}/{systemd_name}.sh",
         fail_action="exit",
     ):
         print(
-            f"{ptc.Blue}[INFO]{ptc.Color_Off} Removed {execstart_script_direcrory}/{systemd_name}.sh"
+            f"{ptc.Blue}[INFO]{ptc.Color_Off} Removed {execstart_script_dir}/{systemd_name}.sh"
         )
     if exec_cmd(
         f'rm -vf "{creds_file}"',
@@ -371,7 +371,7 @@ def generate_rfs_files(
     user_uid: int,
     user_gid: int,
     credentials_direcrory: str,
-    execstart_script_direcrory: str,
+    execstart_script_dir: str,
     server_name: str,
     server_addresses: list,
     share_name: str,
@@ -485,7 +485,7 @@ def generate_rfs_files(
             Type=oneshot
             LogNamespace={systemd_name}
             StandardOutput=journal+console
-            ExecStart=/bin/bash {execstart_script_direcrory}/{systemd_name}.sh
+            ExecStart=/bin/bash {execstart_script_dir}/{systemd_name}.sh
         """
     )
 
@@ -588,7 +588,7 @@ def generate_rfs_files(
         f"""\
             {{
             "credentials_direcrory": "{credentials_direcrory}",
-            "execstart_script_direcrory": "{execstart_script_direcrory}",
+            "execstart_script_dir": "{execstart_script_dir}",
             "server_name": "{server_name}",
             "share_name": "{share_name}",
             "share_mount_under": "{share_mount_under}"
@@ -665,14 +665,14 @@ def generate_rfs_files(
                     f.write(line)
 
             if exec_cmd(
-                f'sudo cp -f "{fp.name}" "{execstart_script_direcrory}/{systemd_name}.sh"',
+                f'sudo cp -f "{fp.name}" "{execstart_script_dir}/{systemd_name}.sh"',
                 fail_action="exit",
             ) and exec_cmd(
-                f"sudo chmod 700 {execstart_script_direcrory}/{systemd_name}.sh",
+                f"sudo chmod 700 {execstart_script_dir}/{systemd_name}.sh",
                 fail_action="exit",
             ):
                 print(
-                    f"{ptc.Blue}[INFO]{ptc.Color_Off} Created {execstart_script_direcrory}/{systemd_name}.sh"
+                    f"{ptc.Blue}[INFO]{ptc.Color_Off} Created {execstart_script_dir}/{systemd_name}.sh"
                 )
 
         if exec_cmd(
@@ -761,7 +761,7 @@ def main():
 
         parser.add_argument(
             "-e",
-            "--execstart_script_direcrory",
+            "--execstart_script_dir",
             default="/usr/local/bin",
             help="Directory to put service script. Default path is accessible to both immutable & normal Fedora as well as allowed by SELinux. Change this at your peril.",
         )
@@ -806,7 +806,7 @@ def main():
 
                     delete_rfs_files(
                         str(data["credentials_direcrory"]),
-                        str(data["execstart_script_direcrory"]),
+                        str(data["execstart_script_dir"]),
                         str(data["server_name"]),
                         str(data["share_name"]),
                         str(data["share_mount_under"]),
@@ -830,7 +830,7 @@ def main():
                         user_uid,
                         user_gid,
                         args.credentials_direcrory,
-                        args.execstart_script_direcrory,
+                        args.execstart_script_dir,
                         server_name,
                         server_addresses,
                         share_name,
@@ -888,7 +888,7 @@ def main():
                                 if args.remove:
                                     delete_rfs_files(
                                         args.credentials_direcrory,
-                                        args.execstart_script_direcrory,
+                                        args.execstart_script_dir,
                                         server["name"],
                                         share["name"],
                                         share["mount_under"],
@@ -898,7 +898,7 @@ def main():
                                         user_uid,
                                         user_gid,
                                         args.credentials_direcrory,
-                                        args.execstart_script_direcrory,
+                                        args.execstart_script_dir,
                                         server["name"],
                                         server["addresses"],
                                         share["name"],

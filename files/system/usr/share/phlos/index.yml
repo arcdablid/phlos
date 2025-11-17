@@ -1,0 +1,161 @@
+deployables:
+  -
+    dst: ~/.scripts
+    src: /usr/share/phlos/dotfiles/scripts
+  -
+    dst: ~/.bashrc
+    src: /usr/share/phlos/dotfiles/bash.d/bashrc
+  -
+    dst: ~/.config/gallery-dl/config.json
+    src: /usr/share/phlos/dotfiles/gallery-dl.d/config.json
+  -
+    dst: ~/.config/tvnamer/tvnamer.json
+    src: /usr/share/phlos/dotfiles/tvnamer.d/tvnamer.json
+  -
+    dst: ~/.config/Code/User/keybindings
+    src: /usr/share/phlos/dotfiles/vscode.d/keybindings.json
+  -
+    dst: ~/.config/Code/User/settings.json
+    src: /usr/share/phlos/dotfiles/vscode.d/settings.json
+  -
+    dst: ~/.config/tealdeer/config.toml
+    src: /usr/share/phlos/dotfiles/tealdeer.d/config.toml
+  -
+    dst: ~/.config/superfile/config.toml
+    src: /usr/share/phlos/dotfiles/superfile.d/config.toml
+  -
+    dst: ~/.xonshrc
+    src: /usr/share/phlos/dotfiles/xonsh.d/xonshrc
+  -
+    dst: ~/.config/starship.toml
+    src: /usr/share/phlos/dotfiles/starship.d/starship.toml
+  -
+    dst: ~/.config/mpv
+    src: /usr/share/phlos/dotfiles/mpv.d
+  -
+    dst: ~/.oxrc
+    src: /usr/share/phlos/dotfiles/ox.d/oxrc
+
+cargo:
+  - cloak # A Command Line OTP (One Time Password) Authenticator application. | https://github.com/evansmurithi/cloak
+  - wrestic # A backup tool built in Rust that provides a wrapper around Restic, a popular backup program. | https://github.com/alvaro17f/wrestic
+  - --git https://github.com/skallwar/suckit # Recursively visit and download a website's content to your disk. | https://github.com/Skallwar/suckit
+
+pip:
+  - flask # A simple framework for building complex web applications | https://pypi.org/project/Flask/
+  - flask-wtf # Form rendering, validation, and CSRF protection for Flask with WTForms | https://pypi.org/project/Flask-WTF/
+  - wtforms # Form validation and rendering for Python web development | https://pypi.org/project/WTForms/
+  - OSMPythonTools # A library to access OpenStreetMap related services | https://pypi.org/project/OSMPythonTools/
+
+  - tqdm # Make your loops show a smart progress meter | https://tqdm.github.io/
+  - pyperclip # Cross-platform clipboard module | https://github.com/asweigart/pyperclip
+  - validators # Python Data Validation for Humans | https://python-validators.github.io/validators/
+  - notify-py # Cross-platform desktop notification library for Python | https://github.com/ms7m/notify-py
+
+homebrew:
+  taps:
+    - homebrew-ffmpeg/ffmpeg
+  formulae:
+    - homebrew-ffmpeg/ffmpeg/ffmpeg --with-librsvg --with-tesseract --with-openh264 --with-rav1e --with-webp --with-whisper-cpp # Play, record, convert, and stream audio and video | https://ffmpeg.org/
+    - Valkyrie00/homebrew-bbrew/bbrew # modern Terminal UI for managing Homebrew | https://bold-brew.com/
+
+    - rage # Simple, modern, secure file encryption | https://github.com/str4d/rage
+    - zellij # tmux alternative | https://github.com/zellij-org/zellij
+    - tabiew # A lightweight TUI application that allows users to view and query using SQL tabular data files - CSV, Parquet, JSON, JSONL, Arrow, and FWF | https://github.com/shshemi/tabiew
+    - ox # Terminal text editor | https://github.com/curlpipe/ox
+    - ripgrep-all # Ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, and more | https://github.com/phiresky/ripgrep-all
+    - watchexec # Execute commands when watched files change | https://watchexec.github.io/
+    - superfile # Modern and pretty fancy file manager for the terminal | https://github.com/MHNightCat/superfile
+    - curlie # Power of curl, ease of use of httpie | https://github.com/rs/curlie
+    - xxh # Bring your favorite shell wherever you go through SSH | https://github.com/xxh/xxh
+    - mask # CLI task runner defined by a simple markdown file | https://github.com/jakedeichert/mask/
+    - rust-parallel # Run commands in parallel with Rust's Tokio framework | https://github.com/aaronriekenberg/rust-parallel
+    - rustscan # Modern Day Portscanner | https://github.com/rustscan/rustscan
+    - bandwhich # Terminal bandwidth utilization tool | https://github.com/imsnif/bandwhich
+    - dysk # Linux utility to get information on filesystems, like df but better | https://dystroy.org/dysk/
+    - gallery-dl # Command-line downloader for image-hosting site galleries and collections | https://github.com/mikf/gallery-dl
+    - yt-dlp # Feature-rich command-line audio/video downloader | https://github.com/yt-dlp/yt-dlp
+    - instaloader # Download media from Instagram | https://instaloader.github.io/
+    - tvnamer # Automatic TV episode file renamer that uses data from thetvdb.com | https://github.com/dbr/tvnamer
+    - monolith # Bundle any web page into a single HTML file | https://github.com/Y2Z/monolith
+    - wthrr # Weather Companion for the Terminal | https://github.com/ttytm/wthrr-the-weathercrab
+    - handbrake # Open-source video transcoder available for Linux, Mac, and Windows | https://handbrake.fr/
+    - media-info # Unified display of technical and tag data for audio/video | https://mediaarea.net/
+    - imagemagick
+    - ghostscript # Tools and libraries to manipulate images in many formats | https://imagemagick.org/index.php
+    - pngquant # PNG image optimizing utility | https://pngquant.org/
+    - jpegoptim # Utility to optimize JPEG files | https://github.com/tjko/jpegoptim
+    - graphviz # Make diagrams from text language | https://graphviz.org/
+    - grex # Command-line tool for generating regular expressions | https://github.com/pemistahl/grex
+    - tokei # Program that allows you to count code, quickly | https://github.com/XAMPPRocky/tokei
+    - nomino # Batch rename utility | https://github.com/yaa110/nomino
+    - qrtool # Utility for encoding or decoding QR code | https://github.com/sorairolake/qrtool
+    - licensor # Write licenses to stdout | https://github.com/raftario/licensor
+    - jnv # Interactive JSON viewer and jq filter editor | https://github.com/ynqa/jnv
+    - miniserve # a CLI tool to serve files and dirs over HTTP | https://github.com/svenstaro/miniserve
+    - gptfdisk # Text-mode partitioning tools | https://www.rodsbooks.com/gdisk/
+    - lazydocker # Lazier way to manage everything docker | https://github.com/jesseduffield/lazydocker
+    - melody # A language that compiles to regular expressions | https://github.com/yoav-lavi/melody
+
+    - carapace
+
+    - trash-cli
+    - television
+
+    - block-goose-cli"
+    - mods
+    - ramalama
+
+vscode_extensions:
+  - adsoncicilioti.yaru-vscode
+  - alefragnani.bookmarks
+  - alefragnani.read-only-indicator
+  - arrterian.nix-env-selector
+  - bierner.github-markdown-preview # Changes VS Code's built-in markdown preview to match GitHub
+  - dotenv.dotenv-vscode
+  - esbenp.prettier-vscode
+  - github.copilot
+  - github.copilot-chat
+  - golang.go
+  - gruntfuggly.todo-tree
+  - jnoortheen.nix-ide
+  - jnoortheen.xonsh
+  - johnpapa.vscode-peacock
+  - kamadorueda.alejandra
+  - laktak.hjson
+  - mhutchie.git-graph
+  - ms-azuretools.vscode-containers
+  - ms-azuretools.vscode-docker
+  - ms-python.debugpy
+  - ms-python.python
+  - ms-python.vscode-pylance
+  - ms-python.vscode-python-envs
+  - ms-vscode-remote.remote-containers
+  - ms-vscode-remote.remote-ssh
+  - nefrob.vscode-just-syntax
+  - nhoizey.gremlins
+  - njpwerner.autodocstring
+  - oderwat.indent-rainbow
+  - pflannery.vscode-versionlens
+  - pkief.material-icon-theme
+  - pkief.material-product-icons
+  - redhat.ansible
+  - redhat.java
+  - redhat.vscode-xml
+  - redhat.vscode-yaml
+  - samuelcolvin.jinjahtml
+  - shardulm94.trailing-spaces
+  - tamasfe.even-better-toml
+  - thenuprojectcontributors.vscode-nushell-lang
+  - tomoki1207.pdf
+  - usernamehw.errorlens
+  - visualstudioexptteam.intellicode-api-usage-examples
+  - visualstudioexptteam.vscodeintellicode
+  - vscjava.migrate-java-to-azure
+  - vscjava.vscode-gradle
+  - vscjava.vscode-java-debug
+  - vscjava.vscode-java-dependency
+  - vscjava.vscode-java-pack
+  - vscjava.vscode-java-test
+  - vscjava.vscode-java-upgrade
+  - vscjava.vscode-maven
