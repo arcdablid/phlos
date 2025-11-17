@@ -217,12 +217,12 @@ phlos-setup-homebrew:
         echo "Installing Homebrew Taps & Formulae..."
 
         mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
-        for h_t in in "${homebrew_taps[@]}"; do
+        for h_t in "${homebrew_taps[@]}"; do
             brew tap "${h_t}"
         done
 
         mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
-        for h_f in in "${homebrew_formulae[@]}"; do
+        for h_f in "${homebrew_formulae[@]}"; do
             brew install --formula "${h_f}"
         done
 
@@ -239,7 +239,7 @@ phlos-setup-vscode-extensions:
 
         echo "Installing VSCode Extensions..."
         mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
-        for v_e in in "${vscode_extensions[@]}"; do
+        for v_e in "${vscode_extensions[@]}"; do
             code --install-extension "${v_e}"
         done
 
@@ -256,7 +256,7 @@ phlos-setup-cargo-pkgs:
 
         echo "Installing cargo packages..."
         mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
-        for cargo_pkg in in "${cargo_pkgs[@]}"; do
+        for cargo_pkg in "${cargo_pkgs[@]}"; do
             cargo install "${cargo_pkg}" --locked
         done
 
@@ -273,7 +273,7 @@ phlos-setup-pip-pkgs:
 
         echo "Installing Python packages..."
         mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
-        for pip_pkg in in "${pip_pkgs[@]}"; do
+        for pip_pkg in "${pip_pkgs[@]}"; do
             pip install -U "${pip_pkg}"
         done
 
