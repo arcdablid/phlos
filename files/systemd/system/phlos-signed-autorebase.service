@@ -1,0 +1,15 @@
+[Unit]
+Description=phlos autorebase to signed OCI and reboot
+ConditionPathExists=!/etc/phlos-autorebase/signed
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+StandardOutput=journal+console
+ExecStart=/usr/bin/rpm-ostree rebase --bypass-driver ostree-image-signed:docker://ghcr.io/arcdablid/phlos:latest
+ExecStart=/usr/bin/touch /etc/phlos-autorebase/signed
+ExecStart=/usr/bin/systemctl reboot
+
+[Install]
+WantedBy=multi-user.target

@@ -313,6 +313,7 @@ modules:
     # this example disables automatic flatpak updates and enables a custom service unit for all users
     system:
       enabled:
+        - phlos-signed-autorebase.service
         - podman.socket
     #   disabled:
     #     - flatpak-system-update.timer
