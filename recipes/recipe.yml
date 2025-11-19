@@ -324,8 +324,9 @@ modules:
     #     - flatpak-user-update.timer
 
   - type: script
-    # snippets:
-    #   - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
+    snippets:
+        - "mkdir -pv /etc/phlos-autorebase && chmod 0754 /etc/phlos-autorebase"
+      # - "curl https://example.com/examplebinary > /usr/bin/examplebinary" # example: download binary
     #   - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
     scripts:
       - virtualbox.sh # example: run files/scripts/myscript.sh
