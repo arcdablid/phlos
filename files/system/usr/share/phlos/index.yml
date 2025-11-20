@@ -53,12 +53,12 @@ pip:
   - notify-py # Cross-platform desktop notification library for Python | https://github.com/ms7m/notify-py
 
 homebrew:
-  taps:
-    - homebrew-ffmpeg/ffmpeg
+  # taps:
+  #   - homebrew-ffmpeg/ffmpeg
   formulae:
-    - homebrew-ffmpeg/ffmpeg/ffmpeg --with-librsvg --with-tesseract --with-openh264 --with-rav1e --with-webp --with-whisper-cpp # Play, record, convert, and stream audio and video | https://ffmpeg.org/
     - Valkyrie00/homebrew-bbrew/bbrew # modern Terminal UI for managing Homebrew | https://bold-brew.com/
 
+    - ffmpeg # Play, record, convert, and stream audio and video | https://ffmpeg.org/
     - rage # Simple, modern, secure file encryption | https://github.com/str4d/rage
     - zellij # tmux alternative | https://github.com/zellij-org/zellij
     - tabiew # A lightweight TUI application that allows users to view and query using SQL tabular data files - CSV, Parquet, JSON, JSONL, Arrow, and FWF | https://github.com/shshemi/tabiew
