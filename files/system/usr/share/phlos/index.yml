@@ -49,7 +49,6 @@ pip:
 
   - tqdm # Make your loops show a smart progress meter | https://tqdm.github.io/
   - pyperclip # Cross-platform clipboard module | https://github.com/asweigart/pyperclip
-  - validators # Python Data Validation for Humans | https://python-validators.github.io/validators/
   - notify-py # Cross-platform desktop notification library for Python | https://github.com/ms7m/notify-py
 
 homebrew:

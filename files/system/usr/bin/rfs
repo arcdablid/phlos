@@ -14,9 +14,9 @@ import subprocess
 import sys
 import tempfile
 import tomllib
-import re
 import glob
 import shutil
+import validators
 from pwd import getpwnam
 from grp import getgrnam
 
@@ -158,46 +158,6 @@ def exec_cmd(*cmd: str, fail_action="return") -> tuple[bool, str]:
             return False, str(sys.stderr)
         else:
             sys.exit(1)
-
-
-def valid_ip(ip_str: str) -> bool:
-    """
-    Validate an IPv4 or IPv6
-    https://sqlpey.com/python/top-5-ways-to-validate-ip-addresses-in-python/
-
-    Args:
-        ip_str (str): the IP string
-
-    Returns:
-        bool: true or false depending on whether it is valid or not
-    """
-    try:
-        ipaddress.ip_address(ip_str)
-        return True
-    except ValueError:
-        return False
-
-
-def valid_fqdn(hostname: str) -> bool:
-
-    if not 1 < len(hostname) < 253:
-        return False
-
-    # Remove trailing dot
-    if hostname[-1] == ".":
-        hostname = hostname[0:-1]
-
-    #  Split hostname into list of DNS labels
-    labels = hostname.split(".")
-
-    #  Define pattern of DNS label
-    #  Can begin and end with a number or letter only
-    #  Can contain hyphens, a-z, A-Z, 0-9
-    #  1 - 63 chars allowed
-    fqdn = re.compile(r"^[a-z0-9]([a-z-0-9-]{0,61}[a-z0-9])?$", re.IGNORECASE)
-
-    # Check that all labels match that pattern.
-    return all(fqdn.match(label) for label in labels)
 
 
 # ------------------------------------------------------------------------------
@@ -383,8 +343,9 @@ def generate_rfs_files(
 ) -> None:
 
     for addr in server_addresses:
-        if not valid_ip(addr) and not valid_fqdn(addr):
-            raise ValueError(f"Error - Invalid server address: {addr}")
+        if not validators.hostname(addr, may_have_port=False):
+            print_error(f"Invalid server address: {addr}")
+            sys.exit(1)
 
     server_addresses_oneliner = " ".join(server_addresses)
 
@@ -778,10 +739,10 @@ def main():
             metavar="P",
             type=str,
             nargs="*",  # n: n values, can be any number you want
-            # ?: a single value, which can be optional
-            # *: a flexible number of values, which will be gathered into a list
-            # +: like *, but requiring at least one value
-            # argparse.REMAINDER: all the values that are remaining in the command line
+                        # ?: a single value, which can be optional
+                        # *: a flexible number of values, which will be gathered into a list
+                        # +: like *, but requiring at least one value
+                        # argparse.REMAINDER: all the values that are remaining in the command line
             help="Paths to YAML files.",
         )
 

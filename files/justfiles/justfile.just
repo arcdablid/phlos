@@ -103,88 +103,16 @@ phlos-setup-dotfiles:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "cp" "mkdir" "rm" )
+    declare -a required_cmds=( "print_divider" "deploy" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' command not available!"
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
             fail=true
         fi
     done
     [[ "${fail}" == true ]] && exit 1
-
-    # ------------------------------------------------------------------------------
-
-    function print_divider {
-
-        function print_usage {
-            local usage="
-            Usage:
-            print_divider [OPTIONS]
-
-            Options:
-            -f <character/string> filler character or string, default is '-'
-            -r <integer> repetitions of filler, default is current number of columns of terminal
-            "
-            printf '%s\n' "${usage}"
-        }
-
-        printf '\n'
-
-        local filler="-"
-        local repetitions="$(tput cols)"
-
-        args=$(getopt -a -o hf:r: --long help,filler:,repetitions: -- "$@")
-        if [[ $? -gt 0 ]]; then
-            print_usage && exit 1
-        fi
-
-        eval set -- ${args}
-        while :
-        do
-            case $1 in
-
-                -h | --help         )   print_usage && exit 0
-                                        shift ;;
-                -f | --filler       )   filler="${2}"
-                                        shift 2 ;;
-                -r | --repetitions  )   repetitions="${2}"
-                                        shift 2 ;;
-                # -- means the end of the arguments; drop this, and break out of the while loop
-                --  )   shift; break ;;
-                *   )   printf "[print_divider] ERROR - Unsupported option: %s\n" "${1}"
-                        print_usage
-                        exit 1
-                        ;;
-            esac
-        done
-
-
-        # local filler=${1:-"-"}
-        # local length=${2:-"$(tput cols)"}
-        printf "%${repetitions}s" | sed "s/ /${filler}/g"
-        printf '\n\n'
-    }
-
-    # ------------------------------------------------------------------------------
-
-    function mkdcp {
-        local src="$1"
-        local dst="$2"
-
-        print_divider -f '-' -r 80
-
-        # remove old if there
-        [[ -e "${dst}" ]] && rm -rfv "${dst}"
-
-        # ensure parent exists regardless
-        local dst_parent="$(dirname -- "$dst")"
-        [[ ! -d "${dst_parent}" ]] && mkdir -pv -- "${dst_parent}"
-
-        # add new
-        cp -auv "${src}" "${dst}"
-    }
 
     # ------------------------------------------------------------------------------
 
@@ -196,14 +124,15 @@ phlos-setup-dotfiles:
         if [[ ! -e "${src}" ]]; then
             errors+=( "${src}" )
         else
-            mkdcp "${src}" "${dst}"
+            print_divider -f '=' -r 80
+            deploy -s "${src}" -d "${dst}"
         fi
     done < <( yq e '.deployables[] | [.dst, .src] | @tsv' "${PHLOS_INDEX}" )
 
     if [[ ${#errors[@]} -gt 0 ]]; then
         print_divider -f '=' -r 80
         for e in "${errors[@]}"; do
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - Deployable '%s' not present!\n" "${e}"
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '%s' not present!?\n" "${e}"
         done
     fi
 
@@ -212,84 +141,162 @@ phlos-setup-homebrew:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    if command -v brew &> /dev/null; then
+    # ------------------------------------------------------------------------------
 
-        echo "Installing Homebrew Taps & Formulae..."
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-        mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
-        for h_t in "${homebrew_taps[@]}"; do
-            print_divider -f '=' -r 80
-            printf "[${executor}] ${BBlue}INFO${Color_Off} - Tapping '%s'\n" "${h_t}"
-            brew tap "${h_t}"
-        done
+    declare -a required_cmds=( "brew" "yq" )
 
-        mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
-        for h_f in "${homebrew_formulae[@]}"; do
-            print_divider -f '=' -r 80
-            printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${h_f}"
-            brew install --formula "${h_f}"
-        done
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
 
-    else
-        printf "[${executor}] ${BRed}ERROR${Color_Off} - Unknown command 'brew'\n" "${e}"
-    fi
+    # ------------------------------------------------------------------------------
+
+    echo "Installing Homebrew Taps & Formulae..."
+
+    mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
+    for h_t in "${homebrew_taps[@]}"; do
+        print_divider -f '=' -r 80
+        printf "[${executor}] ${BBlue}INFO${Color_Off} - Tapping '%s'\n" "${h_t}"
+        brew tap "${h_t}"
+    done
+
+    mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
+    for h_f in "${homebrew_formulae[@]}"; do
+        print_divider -f '=' -r 80
+        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${h_f}"
+        brew install --formula "${h_f}"
+    done
+
 
 # Setup only VSCode extensions.
 phlos-setup-vscode-extensions:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    if command -v code &> /dev/null; then
+    # ------------------------------------------------------------------------------
 
-        echo "Installing VSCode Extensions..."
-        mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
-        for v_e in "${vscode_extensions[@]}"; do
-            print_divider -f '=' -r 80
-            printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${v_e}"
-            code --install-extension "${v_e}"
-        done
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    else
-        printf "[${executor}] ${BRed}ERROR${Color_Off} - Unknown command 'code'\n" "${e}"
-    fi
+    declare -a required_cmds=( "code" "yq" )
+
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
+
+    # ------------------------------------------------------------------------------
+
+    echo "Installing VSCode Extensions..."
+    mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
+    for v_e in "${vscode_extensions[@]}"; do
+        print_divider -f '=' -r 80
+        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${v_e}"
+        code --install-extension "${v_e}"
+    done
 
 # Setup only Cargo pkgs.
 phlos-setup-cargo-pkgs:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    if command -v cargo &> /dev/null; then
+    # ------------------------------------------------------------------------------
 
-        echo "Installing cargo packages..."
-        mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
-        for cargo_pkg in "${cargo_pkgs[@]}"; do
-            print_divider -f '=' -r 80
-            printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${cargo_pkg}"
-            cargo install "${cargo_pkg}" --locked
-        done
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    else
-        printf "[${executor}] ${BRed}ERROR${Color_Off} - Unknown command 'cargo'\n" "${e}"
-    fi
+    declare -a required_cmds=( "cargo" "yq" )
+
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
+
+    # ------------------------------------------------------------------------------
+
+    echo "Installing cargo packages..."
+    mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
+    for cargo_pkg in "${cargo_pkgs[@]}"; do
+        print_divider -f '=' -r 80
+        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${cargo_pkg}"
+        cargo install "${cargo_pkg}" --locked
+    done
 
 # Setup only Python pkgs.
 phlos-setup-pip-pkgs:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    if command -v pip &> /dev/null; then
+    # ------------------------------------------------------------------------------
 
-        echo "Installing Python packages..."
-        mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
-        for pip_pkg in "${pip_pkgs[@]}"; do
-            print_divider -f '=' -r 80
-            printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${pip_pkg}"
-            pip install -U "${pip_pkg}"
-        done
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    else
-        printf "[${executor}] ${BRed}ERROR${Color_Off} - Unknown command 'pip'\n" "${e}"
-    fi
+    declare -a required_cmds=( "pip" "yq" )
+
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
+
+    # ------------------------------------------------------------------------------
+
+    echo "Installing Python packages..."
+    mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
+    for pip_pkg in "${pip_pkgs[@]}"; do
+        print_divider -f '=' -r 80
+        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${pip_pkg}"
+        pip install -U "${pip_pkg}"
+    done
+
 
 # Clean up old packages and Docker/Podman images and volumes.
 phlos-clean:
@@ -297,11 +304,11 @@ phlos-clean:
     set -euo pipefail
 
     echo "Cleaning up system..."
-    docker system prune -af
-    podman system prune -af
     flatpak uninstall --unused
     rpm-ostree cleanup -bm
+    docker system prune -af
     sudo docker system prune -af
+    podman system prune -af
     sudo podman system prune -af
     # nix-collect-garbage -d
     # sudo -i nix-collect-garbage -d
@@ -323,3 +330,85 @@ phlos-vboxusers-add-current-user:
     sudo usermod -aG vboxusers $USER
 
     echo "Reboot system for VirtualBox to pick up the group."
+
+# Add syncthing for current user via a quadlet.
+phlos-setup-podman-syncthing:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # ------------------------------------------------------------------------------
+
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
+
+    declare -a required_cmds=( "podman" )
+
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
+
+    # ------------------------------------------------------------------------------
+
+    read -e -p "Enter config location:" -i "$HOME/.config/syncthing" config_location
+    read -e -p "Enter shares location:" -i "$HOME/Syncthing" shares_location
+
+    # $( whoami ) or $( id -un ) for current user
+    local_user_uid=$( id -u ) # or $( id -u <username> ) for any other user than current
+    local_user_gid=$( id -g ) # or $( id -g <username> ) for any other user than current
+
+
+    QUADLET="
+    [Unit]
+    Description=Podman syncthing.service
+    Wants=network-online.target
+    After=network-online.target
+
+    [Service]
+    Restart=on-failure
+    TimeoutStartSec=900
+
+    [Container]
+    Image=docker.io/syncthing/syncthing:latest
+    AutoUpdate=registry
+    Network=host
+    UserNS=keep-id:uid=${local_user_uid},gid=${local_user_gid}
+    Volume=${config_location}:/var/syncthing/config:Z
+
+    # Folders to share
+    Volume=${shares_location}:/var/syncthing/shares:Z
+
+    [Install]
+    WantedBy=default.target
+    "
+
+    printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating directories...\n"
+    mkdir -pv "${config_location}"
+    mkdir -pv "${shares_location}"
+
+    printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating quadlet...\n"
+    echo "${QUADLET}" | tee ~/.config/containers/systemd/syncthing.container > /dev/null
+
+    printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling & starting quadlet...\n"
+    systemctl --user daemon-reload
+    systemctl --user start syncthing
+
+    printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling automatic updates & start on boot...\n"
+    # 'AutoUpdate=registry' in the systemd definition allows the container to be auto-updated,
+    # manually by calling 'podman auto-update'
+    # or automatically by enabling the relative systemd service:
+    systemctl enable --user --now podman-auto-update.timer
+
+    # Start user services even when not logged in
+    loginctl enable-linger $USER

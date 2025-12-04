@@ -46,6 +46,8 @@ modules:
     install:
       skip-unavailable: true # skip unavailable packages
       packages:
+        - NetworkManager-tui
+
         - starship
         - ghostty
 
@@ -62,8 +64,10 @@ modules:
         - cheat # Help for various commands and their use cases
         - tealdeer # Very fast implementation of tldr in Rust | https://github.com/dbrgn/tealdeer
 
-        - pipx
         - python3-pip
+        - python3-validators # Data validation in Python for humans | https://github.com/python-validators/validators/
+
+        - pipx
         - uv # An extremely fast Python package installer and resolver, written in Rust
         - ruff # Extremely fast Python linter and code formatter
         - isort # Sort Python imports automatically | https://pycqa.github.io/isort/
@@ -118,7 +122,6 @@ modules:
         - lolcat # Rainbows and unicorns in your console! | https://github.com/busyloop/lolcat
         - cmatrix # Console Matrix | https://github.com/abishekvashok/cmatrix/
         - qpdf
-
 
         - stress # Tool to impose load on and stress test a computer system | https://github.com/resurrecting-open-source-projects/stress
         - stress-ng # Stress test a computer system in various selectable ways | https://wiki.ubuntu.com/Kernel/Reference/stress-ng
@@ -260,6 +263,119 @@ modules:
           - com.jeffser.Alpaca
           - com.jeffser.Alpaca.Plugins.Ollama
           - com.jeffser.Alpaca.Plugins.AMD
+
+          # Yaru
+          - org.gtk.Gtk3theme.Yaru
+          - org.gtk.Gtk3theme.Yaru-Yellow
+          - org.gtk.Gtk3theme.Yaru-Yellow-light
+          - org.gtk.Gtk3theme.Yaru-Yellow-light
+          - org.gtk.Gtk3theme.Yaru-Yellow-dark
+          - org.gtk.Gtk3theme.Yaru-Yellow-dark
+          - org.gtk.Gtk3theme.Yaru-Teal
+          - org.gtk.Gtk3theme.Yaru-Teal
+          - org.gtk.Gtk3theme.Yaru-Teal-light
+          - org.gtk.Gtk3theme.Yaru-Teal-light
+          - org.gtk.Gtk3theme.Yaru-Teal-dark
+          - org.gtk.Gtk3theme.Yaru-Teal-dark
+          - org.gtk.Gtk3theme.Yaru-Red
+          - org.gtk.Gtk3theme.Yaru-Red
+          - org.gtk.Gtk3theme.Yaru-Red-light
+          - org.gtk.Gtk3theme.Yaru-Red-light
+          - org.gtk.Gtk3theme.Yaru-Red-dark
+          - org.gtk.Gtk3theme.Yaru-Red-dark
+          - org.gtk.Gtk3theme.Yaru-Purple
+          - org.gtk.Gtk3theme.Yaru-Purple
+          - org.gtk.Gtk3theme.Yaru-Purple-light
+          - org.gtk.Gtk3theme.Yaru-Purple-light
+          - org.gtk.Gtk3theme.Yaru-Purple-dark
+          - org.gtk.Gtk3theme.Yaru-Purple-dark
+          - org.gtk.Gtk3theme.Yaru-Pink
+          - org.gtk.Gtk3theme.Yaru-Pink
+          - org.gtk.Gtk3theme.Yaru-Pink-light
+          - org.gtk.Gtk3theme.Yaru-Pink-light
+          - org.gtk.Gtk3theme.Yaru-Pink-dark
+          - org.gtk.Gtk3theme.Yaru-Pink-dark
+          - org.gtk.Gtk3theme.Yaru-Orange
+          - org.gtk.Gtk3theme.Yaru-Orange
+          - org.gtk.Gtk3theme.Yaru-Orange-light
+          - org.gtk.Gtk3theme.Yaru-Orange-light
+          - org.gtk.Gtk3theme.Yaru-Orange-dark
+          - org.gtk.Gtk3theme.Yaru-Orange-dark
+          - org.gtk.Gtk3theme.Yaru-MATE
+          - org.gtk.Gtk3theme.Yaru-MATE
+          - org.gtk.Gtk3theme.Yaru-MATE-light
+          - org.gtk.Gtk3theme.Yaru-MATE-light
+          - org.gtk.Gtk3theme.Yaru-MATE-dark
+          - org.gtk.Gtk3theme.Yaru-MATE-dark
+          - org.gtk.Gtk3theme.Yaru-Lavender
+          - org.gtk.Gtk3theme.Yaru-Lavender-light
+          - org.gtk.Gtk3theme.Yaru-Lavender-dark
+          - org.gtk.Gtk3theme.Yaru-Grey
+          - org.gtk.Gtk3theme.Yaru-Grey
+          - org.gtk.Gtk3theme.Yaru-Grey-light
+          - org.gtk.Gtk3theme.Yaru-Grey-light
+          - org.gtk.Gtk3theme.Yaru-Grey-dark
+          - org.gtk.Gtk3theme.Yaru-Grey-dark
+          - org.gtk.Gtk3theme.Yaru-Green
+          - org.gtk.Gtk3theme.Yaru-Green
+          - org.gtk.Gtk3theme.Yaru-Green-light
+          - org.gtk.Gtk3theme.Yaru-Green-light
+          - org.gtk.Gtk3theme.Yaru-Green-dark
+          - org.gtk.Gtk3theme.Yaru-Green-dark
+          - org.gtk.Gtk3theme.Yaru-Deepblue
+          - org.gtk.Gtk3theme.Yaru-Deepblue
+          - org.gtk.Gtk3theme.Yaru-Deepblue-light
+          - org.gtk.Gtk3theme.Yaru-Deepblue-light
+          - org.gtk.Gtk3theme.Yaru-Deepblue-dark
+          - org.gtk.Gtk3theme.Yaru-Deepblue-dark
+          - org.gtk.Gtk3theme.Yaru-Cinnamon
+          - org.gtk.Gtk3theme.Yaru-Cinnamon
+          - org.gtk.Gtk3theme.Yaru-Cinnamon-light
+          - org.gtk.Gtk3theme.Yaru-Cinnamon-light
+          - org.gtk.Gtk3theme.Yaru-Cinnamon-dark
+          - org.gtk.Gtk3theme.Yaru-Cinnamon-dark
+          - org.gtk.Gtk3theme.Yaru-Brown
+          - org.gtk.Gtk3theme.Yaru-Brown
+          - org.gtk.Gtk3theme.Yaru-Brown-light
+          - org.gtk.Gtk3theme.Yaru-Brown-light
+          - org.gtk.Gtk3theme.Yaru-Brown-dark
+          - org.gtk.Gtk3theme.Yaru-Brown-dark
+          - org.gtk.Gtk3theme.Yaru-Blue
+          - org.gtk.Gtk3theme.Yaru-Blue
+          - org.gtk.Gtk3theme.Yaru-Blue-light
+          - org.gtk.Gtk3theme.Yaru-Blue-light
+          - org.gtk.Gtk3theme.Yaru-Blue-dark
+          - org.gtk.Gtk3theme.Yaru-Blue-dark
+          - org.gtk.Gtk3theme.Yaru-Aubergine
+          - org.gtk.Gtk3theme.Yaru-Aubergine-light
+          - org.gtk.Gtk3theme.Yaru-Aubergine-dark
+          - org.gtk.Gtk3theme.Yaru-Aqua
+          - org.gtk.Gtk3theme.Yaru-Aqua
+          - org.gtk.Gtk3theme.Yaru-Aqua-light
+          - org.gtk.Gtk3theme.Yaru-Aqua-light
+          - org.gtk.Gtk3theme.Yaru-Aqua-dark
+          - org.gtk.Gtk3theme.Yaru-Aqua-dark
+          - org.gtk.Gtk3theme.Yaru-Amber
+          - org.gtk.Gtk3theme.Yaru-Amber
+          - org.gtk.Gtk3theme.Yaru-Amber-light
+          - org.gtk.Gtk3theme.Yaru-Amber-light
+          - org.gtk.Gtk3theme.Yaru-Amber-dark
+          - org.gtk.Gtk3theme.Yaru-Amber-dark
+          - org.gtk.Gtk3theme.Yaru-sage
+          - org.gtk.Gtk3theme.Yaru-sage-dark
+          - org.gtk.Gtk3theme.Yaru-remix
+          - org.gtk.Gtk3theme.Yaru-remix-light
+          - org.gtk.Gtk3theme.Yaru-remix-dark
+          - org.gtk.Gtk3theme.Yaru-prussiangreen
+          - org.gtk.Gtk3theme.Yaru-prussiangreen-dark
+          - org.gtk.Gtk3theme.Yaru-olive
+          - org.gtk.Gtk3theme.Yaru-olive-dark
+          - org.gtk.Gtk3theme.Yaru-magenta
+          - org.gtk.Gtk3theme.Yaru-magenta-dark
+          - org.gtk.Gtk3theme.Yaru-light
+          - org.gtk.Gtk3theme.Yaru-dark
+          - org.gtk.Gtk3theme.Yaru-bark
+          - org.gtk.Gtk3theme.Yaru-bark-dark
 
       - scope: user # Also add Flathub user repo, but no user packages
 

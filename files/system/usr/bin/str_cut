@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+
+import argparse
+
+
+def str_cut():
+
+    parser = argparse.ArgumentParser(
+        description="Cut input string by provided delimiter and return all parts, or optionally return only those specified via index part.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+
+    parser.add_argument(
+        "-i",
+        "--input",
+        required=True,
+        type=str,
+        help="the input string to cut",
+    )
+
+    parser.add_argument(
+        "-d",
+        "--delimiter",
+        required=True,
+        type=str,
+        help="the character or string to cut with/by",
+    )
+
+    parser.add_argument(
+        "return_parts",
+        type=int,
+        nargs="*",
+        help="part(s) to return",
+    )
+
+    args = parser.parse_args()
+
+    parts = args.input.split(args.delimiter)
+
+    if not args.return_parts:
+        for p in parts:
+            print(f"{p.strip()}")
+    else:
+        for rp in args.return_parts:
+            print(f"{parts[rp-1].strip()}")
+
+
+if __name__ == "__main__":
+    str_cut()

@@ -113,10 +113,6 @@ export On_IWhite='\033[0;107m'   # White
 # Functions
 # ------------------------------------------------------------------------------
 
-function hlt {
-    grep --color=always -E "${1}|$"
-}
-
 # Use sudo on functions and aliases
 # https://unix.stackexchange.com/a/438712
 function sudo_af {
@@ -133,195 +129,13 @@ function sudo_af {
     fi
 }
 
-function strip {
-    printf '%s\n' "${1}" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//'
+function hlt {
+    grep --color=always -E "${1}|$"
 }
 
 # Make new direcotry and move to it
 function mkdcd {
-    [[ $# == 1 ]] && mkd "$1"; cd -- "$1"
-}
-
-# Create a directory like "year-month-day" (i. e. 2007-07-16)
-function mkdnow {
-    mkd ./"$( date +%F )"
-}
-
-# Remove any empty lines from file
-function file_rm_empty_lines {
-    sed -i '/^$/d' "${1}"
-}
-
-function print_char_line {
-    printf "%`tput cols`s" | sed "s/ /${1}/g"
-    printf '\n'
-}
-
-function zero_pad_number {
-    local executor="$FUNCNAME"
-    local hlp="""
-    ${BWhite}Usage:${Color_Off}
-    $ zero_pad_number <number to pad> <reference number>
-
-    The value of the reference number is not important, merely its length.
-    For 12 that is 2 digits, for 123 it'd be 3, etc. This function calculates that.
-    If the length of the 1st number is larger than the 2nd, it is returned as is.
-    """
-
-    [[ $# -ne 2 ]] && echo -e "[${executor}][${BRed}ERROR${Color_Off}] Invalid number of arguments!\n${hlp}" && exit 1
-
-    for arg in "$@"; do
-        case "${arg}" in
-            ''|*[!0-9]* ) echo -e "[${executor}][${BRed}ERROR${Color_Off}] '${arg}' is not a number!\n${hlp}" && exit 1 ;;
-            *           ) continue ;;
-        esac
-    done
-
-    [[ ${#2} -gt ${#1} ]] && printf "%0${#2}d" "${1}" || echo -e "${1}"
-}
-
-
-
-function is_url_validators {
-    local py_v="$( python -V | cut -d ' ' -f 2 )"
-    if [[ "${py_v}" == '3.'* ]]; then
-        python - "$@" << EOF
-import argparse
-import validators
-
-def is_string_an_url(url_string: str) -> bool:
-    result = validators.url(url_string)
-
-    if isinstance(result, ValidationFailure):
-        return False
-
-    return result
-
-
-parser = argparse.ArgumentParser(
-    description="Check input strings are URLs",
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-)
-
-parser.add_argument(
-    "inputs",
-    metavar="I",
-    type=str,
-    nargs="+",
-    help="string to check",
-)
-
-args = parser.parse_args()
-
-for i in args.inputs:
-    print(f"{is_string_an_url(i)}")
-EOF
-    fi
-}
-
-function is_url_urllib {
-    local py_v="$( python -V | cut -d ' ' -f 2 )"
-    if [[ "${py_v}" == '3.'* ]]; then
-        python - "$@" << EOF
-import argparse
-from urllib.parse import urlparse
-
-parser = argparse.ArgumentParser(
-    description="Check input strings are URLs",
-    formatter_class=argparse.RawDescriptionHelpFormatter,
-)
-
-parser.add_argument(
-    "inputs",
-    metavar="I",
-    type=str,
-    nargs="+",
-    help="string to check",
-)
-
-args = parser.parse_args()
-
-for i in args.inputs:
-    result = urlparse(i)
-    if result.scheme and result.netloc:
-        print("true")
-    else:
-        print("false")
-EOF
-    fi
-}
-
-function join_strings_w_delimeter {
-    # https://stackoverflow.com/a/17841619
-    # join_by , a b c #a,b,c
-    # join_by ' , ' a b c #a , b , c
-    # join_by ')|(' a b c #a)|(b)|(c
-    # join_by ' %s ' a b c #a %s b %s c
-    # join_by $'\n' a b c #a<newline>b<newline>c
-    # join_by - a b c #a-b-c
-    # join_by '\' a b c #a\b\c
-    # join_by '-n' '-e' '-E' '-n' #-e-n-E-n-n
-    # join_by , #
-    # join_by , a #a
-
-    local d=${1-} f=${2-}
-    if shift 2; then
-        printf %s "$f" "${@/#/$d}"
-    fi
-}
-
-function cut_string {
-    local py_v="$( python -V | cut -d ' ' -f 2 )"
-    if [[ "${py_v}" == '3.'* ]]; then
-        python - "$@" << EOF
-import argparse
-
-def main():
-
-    parser = argparse.ArgumentParser(
-        description="Cut input string by provided delimiter and return all parts, or optionally return only a specified via index part.",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
-
-    parser.add_argument(
-        "-i",
-        "--input",
-        required=True,
-        type=str,
-        help="the input string to cut",
-    )
-
-    parser.add_argument(
-        "-d",
-        "--delimiter",
-        required=True,
-        type=str,
-        help="the character or string to cut with/by",
-    )
-
-    parser.add_argument(
-        "return_parts",
-        type=int,
-        nargs='*',
-        help="part(s) to return",
-    )
-
-    args = parser.parse_args()
-
-    parts = args.input.split(args.delimiter)
-
-    if not args.return_parts:
-        for p in parts:
-            print(f"{p.strip()}")
-    else:
-        for rp in args.return_parts:
-            print(f"{parts[rp-1].strip()}")
-
-
-if __name__ == "__main__":
-    main()
-EOF
-    fi
+    [[ $# == 1 ]] && cd -- "$( mkd -d "$1" )"
 }
 
 function lns {
@@ -347,74 +161,13 @@ function ls_octal {
                         }'
 }
 
-function get_user_home {
-    local executor="$FUNCNAME"
-    if [[ -z $1 ]]; then
-        printf "[${executor}][${BRed}ERROR${Color_Off}] A username is required!\n"
-        exit 1
-    else
-        if id "${1}" &> /dev/null; then
-            printf '%s\n' "$( getent passwd "$1" | cut -d: -f6 )"
-        else
-            echo -e "[${executor}][${BRed}ERROR${Color_Off}] User '${1}' not found!\n"
-            exit 1
-        fi
-    fi
-}
-
-# Adapted from https://unix.stackexchange.com/a/102698
-function get_age_days {
-    echo $(( ( $( date +%s ) - $( stat -c %Y -- "$( expand_path "$1" )" ) ) / 86400 ))
-}
-
-# Adapted from https://unix.stackexchange.com/a/102698
-function get_age_seconds {
-    echo $(( $( date +%s ) - $( stat -c %Y -- "$( expand_path "$1" )" ) ))
-}
-
-function wireguard_add {
-    local executor="$FUNCNAME"
-
-    local wg_config="$( expand_path "${1}" )"
-    local wg_name="wg_$( basename "$( dirname "${wg_config}" )" )"
-    printf "${BICyan}wg_name: %s${Color_Off}\n" "${wg_name}"
-
-    # interface name must not be longer than 15 characters #
-    if ! nmcli connection show "${wg_name}" &> /dev/null ; then
-        nmcli connection import type wireguard file "${wg_config}"
-        nmcli connection modify wg0 connection.id "${wg_name}"
-        nmcli connection modify "${wg_name}" autoconnect no
-        nmcli connection up "${wg_name}"
-    else
-        printf "\n[${executor}] ${BYellow}INFO${Color_Off} wireguard configuration already present...\n"
-    fi
-}
-
-function wireguard_remove {
-    local executor="$FUNCNAME"
-
-    local wg_config="$( expand_path "${1}" )"
-    local wg_name="wg_$( basename "$( dirname "${wg_config}" )" )"
-    printf "${BICyan}wg_name: %s${Color_Off}\n" "${wg_name}"
-
-    if nmcli connection show "${wg_name}" &> /dev/null ; then
-        nmcli connection down "${wg_name}"
-        nmcli connection delete "${wg_name}"
-    fi
-}
-
-# printf 'Updating flake & applying any changes...\n'
-# nix flake update --flake "${specs_path}"/nix
-# home-manager -b hm_backup switch --flake "${specs_path}/nix#${t_user}@${t_host}"
-# nix store gc
-# nix store optimise
-
 # ------------------------------------------------------------------------------
 # PATH
 # ------------------------------------------------------------------------------
 
 # PATH uses first-come-first-served approach,
-# so add found items to end of PATH to prevent system commands being overriden.
+# so add items to end of PATH if you want
+# to prevent system commands being overridden.
 
 # mapfile -t original_PATH_paths < <( echo "${PATH//:/$'\n'}" )
 
@@ -438,6 +191,24 @@ done
 PATH="$( printf %s "$PATH" | awk -v RS=: -v ORS=: '!arr[$0]++' )"
 
 export PATH
+
+# ------------------------------------------------------------------------------
+# PYTHONPATH
+# ------------------------------------------------------------------------------
+
+declare -a additional_PYTHONPATH_paths=(
+    "$HOME/.scripts"
+    "/usr/bin"
+)
+
+for aPPp in "${additional_PYTHONPATH_paths[@]}"; do
+    PYTHONPATH="${aPPp}:$PYTHONPATH"
+done
+
+# Remove any duplicates
+PYTHONPATH="$( printf %s "$PYTHONPATH" | awk -v RS=: -v ORS=: '!arr[$0]++' )"
+
+export PYTHONPATH
 
 # ------------------------------------------------------------------------------
 # Homebrew

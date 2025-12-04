@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set ${SET_X:+-x} -eou pipefail
 
 #------------------------------------------------------------------------------
 # ANSI escape code variables.
@@ -85,63 +85,19 @@ On_IWhite='\033[0;107m'   # White
 # ------------------------------------------------------------------------------
 
 executor="${0##*/}"
-
-declare -a required_cmds=( "podman" )
-
-fail=false
-for rc in "${required_cmds[@]}"; do
-    if ! command -v "${rc}" &> /dev/null ; then
-        printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' command not available!"
-        fail=true
-    fi
+executor_path="${BASH_SOURCE}"
+while [ -L "${executor_path}" ]; do
+    executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+    executor_path="$(readlink "${executor_path}")"
+    [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
 done
-[[ "${fail}" == true ]] && exit 1
+executor_path="$(readlink -f "${executor_path}")"
+executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
 # ------------------------------------------------------------------------------
 
-# $( whoami ) or $( id -un ) for current user
-local_user_uid=$( id -u ) # or $( id -u <username> ) for any other user than current
-local_user_gid=$( id -g ) # or $( id -g <username> ) for any other user than current
-config_location="$HOME/.config/syncthing"
-shares_location="$HOME/Syncthing"
+echo "${executor_path}"
 
-
-mkdir -pv "${config_location}"
-mkdir -pv "${shares_location}"
-
-QUADLET="
-[Unit]
-Description=Podman syncthing.service
-Wants=network-online.target
-After=network-online.target
-
-[Service]
-Restart=on-failure
-TimeoutStartSec=900
-
-[Container]
-Image=docker.io/syncthing/syncthing:latest
-AutoUpdate=registry
-Network=host
-UserNS=keep-id:uid=${local_user_uid},gid=${local_user_gid}
-Volume=${config_location}:/var/syncthing/config:Z
-
-# Folders to share
-Volume=${shares_location}:/var/syncthing/shares:Z
-
-[Install]
-WantedBy=default.target
-"
-
-echo "${QUADLET}" | tee ~/.config/containers/systemd/syncthing.container > /dev/null
-
-systemctl --user daemon-reload
-systemctl --user start syncthing
-
-# 'AutoUpdate=registry' in the systemd definition allows the container to be auto-updated,
-# manually by calling 'podman auto-update'
-# or automatically by enabling the relative systemd service:
-systemctl enable --user --now podman-auto-update.timer
-
-# Start user services even when not logged in
-loginctl enable-linger $USER
+unset executor
+unset executor_path
+unset executor_dir
