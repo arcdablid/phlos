@@ -124,7 +124,7 @@ def unit_tests(tests: list[list]) -> None:
             if t[2]:
                 assert globals()[f"{t[0]}"](t[1])
             else:
-                assert not valid_ip(t[1])
+                assert not validators.hostname(t[1], may_have_port=False)
             t_output[0] = t_result_pass
             # print(f'{ptc.Green}[PASS]{ptc.Color_Off} {t[0]}("{t[1]}") == {t[2]}')
         except AssertionError as e:

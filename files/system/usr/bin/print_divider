@@ -6,7 +6,7 @@ import shutil
 
 def print_divider():
     parser = argparse.ArgumentParser(
-        description="Print a line ",
+        description="Print a dividing line.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 

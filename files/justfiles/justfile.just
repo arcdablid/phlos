@@ -103,12 +103,12 @@ phlos-setup-dotfiles:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_divider" "deploy" "yq" )
+    declare -a required_cmds=( "print_msg" "print_divider" "deploy" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -132,7 +132,8 @@ phlos-setup-dotfiles:
     if [[ ${#errors[@]} -gt 0 ]]; then
         print_divider -f '=' -r 80
         for e in "${errors[@]}"; do
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '%s' not present!?\n" "${e}"
+            print_msg -x "${executor}" -e -b "'${e}' not present!?"
+            # printf "[${executor}] ${BRed}ERROR${Color_Off} - '%s' not present!?\n" "${e}"
         done
     fi
 
@@ -153,12 +154,12 @@ phlos-setup-homebrew:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "brew" "yq" )
+    declare -a required_cmds=( "print_msg" "brew" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -171,14 +172,16 @@ phlos-setup-homebrew:
     mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
     for h_t in "${homebrew_taps[@]}"; do
         print_divider -f '=' -r 80
-        printf "[${executor}] ${BBlue}INFO${Color_Off} - Tapping '%s'\n" "${h_t}"
+        print_msg -x "${executor}" -i "Tapping '${h_t}'"
+        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Tapping '%s'\n" "${h_t}"
         brew tap "${h_t}"
     done
 
     mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
     for h_f in "${homebrew_formulae[@]}"; do
         print_divider -f '=' -r 80
-        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${h_f}"
+        print_msg -x "${executor}" -i "Installing '${h_f}'"
+        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${h_f}"
         brew install --formula "${h_f}"
     done
 
@@ -200,12 +203,12 @@ phlos-setup-vscode-extensions:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "code" "yq" )
+    declare -a required_cmds=( "print_msg" "code" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -217,7 +220,8 @@ phlos-setup-vscode-extensions:
     mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
     for v_e in "${vscode_extensions[@]}"; do
         print_divider -f '=' -r 80
-        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${v_e}"
+        print_msg -x "${executor}" -i "Installing '${v_e}'"
+        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${v_e}"
         code --install-extension "${v_e}"
     done
 
@@ -238,12 +242,12 @@ phlos-setup-cargo-pkgs:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "cargo" "yq" )
+    declare -a required_cmds=( "print_msg" "cargo" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -255,7 +259,8 @@ phlos-setup-cargo-pkgs:
     mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
     for cargo_pkg in "${cargo_pkgs[@]}"; do
         print_divider -f '=' -r 80
-        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${cargo_pkg}"
+        print_msg -x "${executor}" -i "Installing '${cargo_pkg}'"
+        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${cargo_pkg}"
         cargo install "${cargo_pkg}" --locked
     done
 
@@ -276,12 +281,12 @@ phlos-setup-pip-pkgs:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "pip" "yq" )
+    declare -a required_cmds=( "print_msg" "pip" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -293,7 +298,8 @@ phlos-setup-pip-pkgs:
     mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
     for pip_pkg in "${pip_pkgs[@]}"; do
         print_divider -f '=' -r 80
-        printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${pip_pkg}"
+        print_msg -x "${executor}" -i "Installing '${pip_pkg}'"
+        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${pip_pkg}"
         pip install -U "${pip_pkg}"
     done
 
@@ -348,12 +354,12 @@ phlos-setup-podman-syncthing:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "podman" )
+    declare -a required_cmds=( "print_msg" "podman" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
         if ! command -v "${rc}" &> /dev/null ; then
-            printf "[${executor}] ${BRed}ERROR${Color_Off} - '${rc}' unavailable!?"
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
             fail=true
         fi
     done
@@ -393,18 +399,23 @@ phlos-setup-podman-syncthing:
     WantedBy=default.target
     "
 
-    printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating directories...\n"
+    print_msg -x "${executor}" -i "Creating directories..."
+    # printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating directories...\n"
     mkdir -pv "${config_location}"
     mkdir -pv "${shares_location}"
 
-    printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating quadlet...\n"
+    print_msg -x "${executor}" -i "Creating quadlet..."
+    # printf "[${executor}] ${BBlue}INFO${Color_Off} - Creating quadlet...\n"
     echo "${QUADLET}" | tee ~/.config/containers/systemd/syncthing.container > /dev/null
 
-    printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling & starting quadlet...\n"
+    print_msg -x "${executor}" -i "Enabling & starting quadlet..."
+    # printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling & starting quadlet...\n"
     systemctl --user daemon-reload
     systemctl --user start syncthing
 
-    printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling automatic updates & start on boot...\n"
+    print_msg -x "${executor}" -i "Enabling automatic updates & start on boot..."
+    # printf "[${executor}] ${BBlue}INFO${Color_Off} - Enabling automatic updates & start on boot...\n"
+
     # 'AutoUpdate=registry' in the systemd definition allows the container to be auto-updated,
     # manually by calling 'podman auto-update'
     # or automatically by enabling the relative systemd service:

@@ -3,6 +3,7 @@
 import argparse
 import datetime
 import os
+import pathlib
 import time
 
 
@@ -90,7 +91,7 @@ def print_error(msg):
 
 def file_get_age():
     parser = argparse.ArgumentParser(
-        description="Pad numbers or strings, left or right, ",
+        description="Get file age against creation (default) or last modification time.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -119,15 +120,21 @@ def file_get_age():
     args = parser.parse_args()
 
     for i in args.inputs:
-        if args.modification:
-            age = int(time.time() - os.path.getmtime(i))
-        else:
-            age = int(time.time() - os.path.getctime(i))
 
-        if args.readable:
-            print(str(datetime.timedelta(seconds = age)))
+        i = pathlib.Path(i).expanduser().resolve()
+
+        if not i.exists():
+            print_error(f"Input \'{str(i)}\' does not exist!")
         else:
-            print(str(age))
+            if args.modification:
+                age = int(time.time() - os.path.getmtime(i))
+            else:
+                age = int(time.time() - os.path.getctime(i))
+
+            if args.readable:
+                print(f"{str(i)} \u21a6 {str(datetime.timedelta(seconds = age))}")
+            else:
+                print(f"{str(i)} \u21a6 {str(age)}s")
 
 if __name__ == "__main__":
     file_get_age()

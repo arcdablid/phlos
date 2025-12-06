@@ -15,7 +15,15 @@ def str_join():
         "--delimiter",
         required=True,
         type=str,
-        help="the character or string to cut with/by",
+        help="The character or string to join with.",
+    )
+
+    parser.add_argument(
+        "-w",
+        "--whitespace",
+        action="store_true",
+        help="Represent whitespace with the Unicode character of middle dot.",
+        # https://en.wikipedia.org/wiki/Whitespace_character#Substitute_images
     )
 
     parser.add_argument(
@@ -26,17 +34,10 @@ def str_join():
         help="Strings to join.",
     )
 
-    parser.add_argument(
-        "-q",
-        "--quote",
-        action="store_true",
-        help="Print in quotes to see spaces.",
-    )
-
     args = parser.parse_args()
 
-    if args.quote:
-        print(f"\'{args.delimiter.join(args.strings)}\'")
+    if args.whitespace:
+        print(args.delimiter.join(args.strings).replace(" ", "\u00b7"))
     else:
         print(args.delimiter.join(args.strings))
 

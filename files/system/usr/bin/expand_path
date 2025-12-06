@@ -6,7 +6,7 @@ import pathlib
 
 def expand_path():
     parser = argparse.ArgumentParser(
-        description="Normalize input paths",
+        description="Normalize input paths.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
@@ -15,14 +15,14 @@ def expand_path():
         metavar="P",
         type=str,
         nargs="+",
-        help="Path to file/folder",
+        help="Path to file/folder.",
     )
 
     args = parser.parse_args()
 
     for p in args.paths:
-        p = pathlib.Path(f"{p}").expanduser().resolve()
-        print(f"{str(p)}")
+        p = pathlib.Path(p).expanduser().resolve()
+        print(str(p))
 
 
 if __name__ == "__main__":

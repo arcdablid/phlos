@@ -2,8 +2,7 @@
 
 import argparse
 import datetime
-import pathlib
-import sys
+
 
 class ptc:  # print text colours
 
@@ -83,105 +82,141 @@ class ptc:  # print text colours
 
 # ------------------------------------------------------------------------------
 
-def print_info(msg):
-    print(f"{ptc.Blue}[INFO]{ptc.Color_Off} {msg}")
 
-
-def print_error(msg):
-    print(f"{ptc.Red}[ERROR]{ptc.Color_Off} {msg}")
-
-# ------------------------------------------------------------------------------
-
-def mkd():
-
-    executor = sys.argv[0]
-
+def print_msg(*args):
     parser = argparse.ArgumentParser(
-        description="Normalize input paths",
+        description="Pad numbers or strings, left or right, ",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    format_group = parser.add_mutually_exclusive_group(required=False)
+    msg_type_group = parser.add_mutually_exclusive_group(required=False)
 
-    format_group.add_argument(
-        "-n",
-        "--now",
+    msg_type_group.add_argument(
+        "-e",
+        "--error",
         action="store_true",
-        help="Suffix date of today & current time in YYYY-MM-DD_HH-MM-SS format. If no path is given, this will constitute the entirety of the new directory name under the current working directory.",
+        help="Output msg as error.",
     )
 
-    format_group.add_argument(
-        "-t",
-        "--today",
-        action="store_true",
-        help="Suffix date of today in YYYY-MM-DD format. If no path is given, this will constitute the entirety of the new directory name under the current working directory.",
-    )
-
-    format_group.add_argument(
+    msg_type_group.add_argument(
         "-s",
-        "--simulate",
+        "--success",
         action="store_true",
-        help="Simulate all filesystem actions.",
+        help="Output msg as success.",
+    )
+
+    msg_type_group.add_argument(
+        "-i",
+        "--info",
+        action="store_true",
+        help="Output msg as info.",
+    )
+
+    msg_type_group.add_argument(
+        "-w",
+        "--warning",
+        action="store_true",
+        help="Output msg as warning.",
+    )
+
+    msg_type_group.add_argument(
+        "-n",
+        "--note",
+        action="store_true",
+        help="Output msg as note.",
     )
 
     parser.add_argument(
-        "-d",
-        "--display",
+        "-b",
+        "--bold",
         action="store_true",
-        help="Display only created directory for further actions.",
+        help="Output msg in bold.",
     )
 
     parser.add_argument(
-        "path",
-        metavar="P",
+        "-x",
+        "--executor",
         type=str,
-        nargs="?",  # n: n values, can be any number you want
+        help="The originator of the message.",
+    )
+
+    parser.add_argument(
+        "-t",
+        "--timestamp",
+        action="store_true",
+        help="Date & time of the message.",
+    )
+
+    parser.add_argument(
+        "inputs",
+        metavar="I",
+        type=str,
+        nargs="+",  # n: n values, can be any number you want
                     # ?: a single value, which can be optional
                     # *: a flexible number of values, which will be gathered into a list
                     # +: like *, but requiring at least one value
                     # argparse.REMAINDER: all the values that are remaining in the command line
-        help="Path to use to create directory, instead of current working directory.",
+        help="Input string(s) to create msg(s) with.",
     )
 
     args = parser.parse_args()
 
-    if not args.path:
-        if not args.today and not args.now:
-            print_error("A directory name is required!")
-            sys.exit(1)
+    msg = " ".join(args.inputs)
+
+    output = ""
+
+    if args.executor:
+        if args.bold:
+            output += f"{ptc.BWhite}"
         else:
-            directory_path = "~/"
-    else:
-        directory_path = args.path
+            output += f"{ptc.White}"
+        output += f"[{args.executor}]{ptc.Color_Off} "
 
-    if args.today:
-        directory_path = (
-            f"{directory_path}{datetime.datetime.now().strftime("%Y-%m-%d")}"
-        )
-    elif args.now:
-        directory_path = f"{directory_path}{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}"
-
-    directory_path = pathlib.Path(directory_path).expanduser().resolve()
-
-    if args.simulate:
-        if args.display:
-            print(str(directory_path))
+    if args.timestamp:
+        if args.bold:
+            output += f"{ptc.BWhite}"
         else:
-            print_info(f"Directory '{directory_path}' created successfully.")
+            output += f"{ptc.White}"
+        output += f"[{datetime.datetime.now()}]{ptc.Color_Off} "  # .strftime("%Y-%m-%d %H:%M:%S")
+
+    if args.error:
+        if args.bold:
+            output += f"{ptc.BRed}"
+        else:
+            output += f"{ptc.Red}"
+        output += f"[ERROR]{ptc.Color_Off} "
+    elif args.success:
+        if args.bold:
+            output += f"{ptc.BGreen}"
+        else:
+            output += f"{ptc.Green}"
+        output += f"[SUCCESS]{ptc.Color_Off} "
+    elif args.warning:
+        if args.bold:
+            output += f"{ptc.BYellow}"
+        else:
+            output += f"{ptc.Yellow}"
+        output += f"[WARNING]{ptc.Color_Off} "
+    elif args.info:
+        if args.bold:
+            output += f"{ptc.BPurple}"
+        else:
+            output += f"{ptc.Purple}"
+        output += f"[INFO]{ptc.Color_Off} "
+    elif args.note:
+        if args.bold:
+            output += f"{ptc.BBlue}"
+        else:
+            output += f"{ptc.Blue}"
+        output += f"[NOTE]{ptc.Color_Off} "
+
+    if args.bold:
+        output += f"{ptc.BWhite}{msg}{ptc.Color_Off}"
     else:
-        try:
-            directory_path.mkdir(parents=True)
-            if args.display:
-                print(str(directory_path))
-            else:
-                print_info(f"Directory '{directory_path}' created successfully.")
-        except FileExistsError:
-            print_info(f"Directory '{directory_path}' already exists.")
-        except PermissionError:
-            print_error(f"Permission denied - Unable to create '{directory_path}'.")
-        except Exception as e:
-            print_error(f"An error occurred: {e}")
+        output += f"{ptc.White}{msg}{ptc.Color_Off}"
+
+    print(output)
 
 
 if __name__ == "__main__":
-    mkd()
+    print_msg()

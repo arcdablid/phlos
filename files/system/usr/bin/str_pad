@@ -108,7 +108,7 @@ def print_error(msg):
 
 def str_pad():
     parser = argparse.ArgumentParser(
-        description="Pad numbers or strings, left or right, ",
+        description="Pad input strings to the left or right.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
