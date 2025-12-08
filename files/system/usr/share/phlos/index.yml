@@ -42,14 +42,7 @@ cargo:
   - --git https://github.com/skallwar/suckit # Recursively visit and download a website's content to your disk. | https://github.com/Skallwar/suckit
 
 pip:
-  - flask # A simple framework for building complex web applications | https://pypi.org/project/Flask/
-  - flask-wtf # Form rendering, validation, and CSRF protection for Flask with WTForms | https://pypi.org/project/Flask-WTF/
-  - wtforms # Form validation and rendering for Python web development | https://pypi.org/project/WTForms/
   - OSMPythonTools # A library to access OpenStreetMap related services | https://pypi.org/project/OSMPythonTools/
-
-  - tqdm # Make your loops show a smart progress meter | https://tqdm.github.io/
-  - pyperclip # Cross-platform clipboard module | https://github.com/asweigart/pyperclip
-  - notify-py # Cross-platform desktop notification library for Python | https://github.com/ms7m/notify-py
 
 homebrew:
   # taps:

@@ -65,7 +65,12 @@ modules:
         - tealdeer # Very fast implementation of tldr in Rust | https://github.com/dbrgn/tealdeer
 
         - python3-pip
+        - python3-tqdm # Make your loops show a smart progress meter | https://tqdm.github.io/
+        - python3-pyperclip # Cross-platform clipboard module | https://github.com/asweigart/pyperclip
         - python3-validators # Data validation in Python for humans | https://github.com/python-validators/validators/
+        - python3-flask
+        - python3-flask-wtf # Simple integration of Flask and WTForms
+        - python3-wtforms # Forms validation and rendering library for python
 
         - pipx
         - uv # An extremely fast Python package installer and resolver, written in Rust
