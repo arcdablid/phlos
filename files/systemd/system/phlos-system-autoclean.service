@@ -1,0 +1,19 @@
+[Unit]
+Description=Daily clean up of old packages and Docker/Podman images.
+
+[Service]
+Type=oneshot
+Environment="LOG_FILE=/var/log/system_autoclean.log"
+
+ExecStart=/usr/bin/bash -c '/usr/bin/print_msg -t -i -- "Starting system cleanup..." >> "$LOG_FILE"'
+
+ExecStart=/usr/bin/bash -c '/usr/bin/flatpak uninstall --unused >> "$LOG_FILE" 2>&1'
+ExecStart=/usr/bin/bash -c '/usr/bin/rpm-ostree cleanup -bm >> "$LOG_FILE" 2>&1'
+# Docker & Podman only anything older than 7 days
+ExecStart=/usr/bin/bash -c '/usr/bin/docker system prune -af --filter "until=$((7*24))h" >> "$LOG_FILE" 2>&1'
+ExecStart=/usr/bin/bash -c '/usr/bin/podman system prune -af --filter "until=$((7*24))h" >> "$LOG_FILE" 2>&1'
+
+ExecStart=/usr/bin/bash -c '/usr/bin/print_msg -t -i -- "System cleanup completed" >> "$LOG_FILE"'
+
+# Trim log to just 1000 lines
+ExecStart=/usr/bin/bash -c 'mapfile -t lines < <( tail -n 1000 "$LOG_FILE" ) && printf '%s\n' "${lines[@]}" | tee "${LOG_FILE}" > /dev/null'

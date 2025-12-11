@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 #------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ done
 executor_path="$(readlink -f "${executor_path}")"
 executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-declare -a required_cmds=( "cp" "mkdir" "rm" )
+declare -a required_cmds=( "expand_path" "code" )
 
 fail=false
 for rc in "${required_cmds[@]}"; do
@@ -107,50 +107,23 @@ done
 
 # ------------------------------------------------------------------------------
 
-function print_usage {
-    local usage="
-    Usage:
-    print_divider [OPTIONS]
+extensions_list_file=${1:-"./vscode-extentions_$(hostnamectl)_$(date '+%Y-%m-%d %H:%M:%S').txt"}
 
-    Options:
-    -f <character/string> filler character or string, default is '-'
-    -r <integer> repetitions of filler, default is current number of columns of terminal
-    "
-    printf '%s\n' "${usage}"
-}
+echo "Do you want to export or import VSCcode extensions? [export(e)/import(i)]"
+read action
 
-printf '\n'
-
-local filler="-"
-local repetitions="$(tput cols)"
-
-args=$(getopt -a -o hf:r: --long help,filler:,repetitions: -- "$@")
-if [[ $? -gt 0 ]]; then
-    print_usage && exit 1
+if [[ "${action}" == "export" || "${action}" == "e" ]]; then
+    echo "Exporting VSCode extensions..."
+    mkdir -pv "$(dirname "${extensions_list_file}")"
+    code --list-extensions > "${extensions_list_file}"
+    echo "Extensions have been exported to vscode-extensions.txt"
+elif [[ "${action}" == "import" || "${action}" == "i" ]]; then
+    [[ ! -f "${extensions_list_file}" ]] && printf '%s\n' "List file not found!" && exit 1
+    echo "Importing VSCode extensions..."
+    while IFS= read -r extension; do
+        code --install-extension "${extension}"
+    done < "${extensions_list_file}"
+    echo "Extensions have been imported!"
+else
+    echo "Invalid action. Please choose 'export' or 'import'."
 fi
-
-eval set -- ${args}
-while :
-do
-    case $1 in
-
-        -h | --help         )   print_usage && exit 0
-                                shift ;;
-        -f | --filler       )   filler="${2}"
-                                shift 2 ;;
-        -r | --repetitions  )   repetitions="${2}"
-                                shift 2 ;;
-        # -- means the end of the arguments; drop this, and break out of the while loop
-        --  )   shift; break ;;
-        *   )   printf "[${executor}] ${BRed}ERROR${Color_Off} - Unsupported option: %s\n" "${1}"
-                print_usage
-                exit 1
-                ;;
-    esac
-done
-
-
-# local filler=${1:-"-"}
-# local length=${2:-"$(tput cols)"}
-printf "%${repetitions}s" | sed "s/ /${filler}/g"
-printf '\n\n'
