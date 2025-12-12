@@ -69,6 +69,7 @@ modules:
         - python3-tqdm # Make your loops show a smart progress meter | https://tqdm.github.io/
         - python3-pyperclip # Cross-platform clipboard module | https://github.com/asweigart/pyperclip
         - python3-validators # Data validation in Python for humans | https://github.com/python-validators/validators/
+        - python3-tabulate # Pretty-print tabular data in Python, a library and a command-line utility
         - python3-flask
         - python3-flask-wtf # Simple integration of Flask and WTForms
         - python3-wtforms # Forms validation and rendering library for python
@@ -182,6 +183,8 @@ modules:
 
       - scope: system
         install:
+          - org.kde.dolphin
+
           - com.github.tchx84.Flatseal
           - io.github.fabrialberio.pinapp
 
