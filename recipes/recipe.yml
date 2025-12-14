@@ -440,11 +440,12 @@ modules:
       enabled:
         - phlos-signed-autorebase.service
         - podman.socket
+        - phlos-system-autoclean.timer
     #   disabled:
     #     - flatpak-system-update.timer
-    # user:
-    #   enabled:
-    #     - my-custom.service
+    user:
+      enabled:
+        - notify-signed-autorebase-in-progress.service
     #   disabled:
     #     - flatpak-user-update.timer
 
