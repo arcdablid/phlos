@@ -8,7 +8,6 @@ Wants=network-online.target
 Type=oneshot
 StandardOutput=journal+console
 
-ExecStart=/usr/bin/notify-send -u critical -i /usr/share/phlos/bazzite-logo.svg "phlos-signed-autorebase.service" "Initiating autorebase to the signed image! System will reboot automatically afterwards!"
 ExecStart=/usr/bin/rpm-ostree rebase --bypass-driver ostree-image-signed:docker://ghcr.io/arcdablid/phlos:latest
 ExecStart=/usr/bin/touch /etc/phlos-autorebase/signed
 ExecStart=/usr/bin/systemctl reboot
