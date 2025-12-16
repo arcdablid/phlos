@@ -4,8 +4,8 @@ A custom immutable Linux OS based on [The Bazzite Developer Experience](https://
 
 ## Notable additions & features
 - Ghostty terminal
-- Teamviewer
-- [VirtualBox](https://github.com/arcdablid/phlos/files/scripts/virtualbox.sh) (installation script by [ettfemnio](https://github.com/ettfemnio/bazzite-virtualbox/blob/main/build.sh))
+- TeamViewer - because RustDesk isn't everywhere yet.
+- VirtualBox - script by [by ettfemnio and Preston Petrie](https://github.com/ettfemnio/bazzite-virtualbox/blob/main/build.sh) using forked reference to monitor changes for security.
 - Pre-installed extra [system packages & flatpaks](https://github.com/arcdablid/phlos/recipes/recipe.yml)
 - Curated list of optional to install [Homebrew formulae, Cargo pkgs, Python pkgs & VSCode extensions](https://github.com/arcdablid/phlos/files/system/usr/share/phlos/index.yml)
 - My [dotfiles](https://github.com/arcdablid/phlos/files/system/usr/share/phlos/dotfiles) should you wish to install them. Will probably move them to their own (chezmoi) repo in the future.
@@ -61,7 +61,7 @@ A custom immutable Linux OS based on [The Bazzite Developer Experience](https://
   Thusly, `rfs` generates per share systemd `.mount`, `.automount`, `.service` & `.timer` units, along with a journald config file for debugging, a credentials file by default under the `~/.config/rfs` path, and a script run by the `.service` unit which contains the main logic for checking server addresses & availability and acting accordingly - start, refresh or stop things. The `.timer` controls the frequency of how often this process happens. Lastly, a faux-registry file is generated to facilitate easy removal of shares later on. Check `rfs --help` for adjusting some (opinionated) default options.
 
   ### WARNING
-  **`rfs` is a work in progress and far from perfect! I'm sure there's things that could be coded a lot better and that there's scenarios I haven't tested or accounted for, like how to handle what happens if a connection is refreshed or lost entirely while data is being written, if it's something that could/should be handled at this level. Put succinctly, use at your own risk!**
+  **`rfs` is a work in progress and far from perfect! I'm sure there's things that could be coded a lot better and that there's scenarios I haven't tested or accounted for, assuming it's something that could/should be handled at this level. Put succinctly, use at your own risk!**
 
 - Specific `ujust` recipes to auto-setup most of the above & other useful extras:
 
@@ -93,7 +93,7 @@ To install you need to rebase from an existing atomic Fedora installation.
   ```
   systemctl reboot
   ```
-- Then rebase to the signed image, like so:
+- Rebasing to the signed image should happen automatically after the system comes up again. It might take a few depending on system/network performance. Manually, it can be done like so:
   ```
   rpm-ostree rebase ostree-image-signed:docker://ghcr.io/arcdablid/phlos:latest
   ```
