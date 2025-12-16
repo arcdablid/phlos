@@ -458,4 +458,4 @@ modules:
       # run files/scripts/virtualbox.sh
       # - virtualbox.sh
       # run controlled/monitored version of VirtualBox installation script by ettfemnio and Preston Petrie
-      - "curl -s https://raw.githubusercontent.com/arcdablid/bazzite-virtualbox/refs/heads/main/build.sh | bash"
+      - "/usr/bin/curl -s https://raw.githubusercontent.com/arcdablid/bazzite-virtualbox/refs/heads/main/build.sh | /usr/bin/bash"
