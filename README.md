@@ -5,7 +5,7 @@ A custom immutable Linux OS based on [The Bazzite Developer Experience](https://
 ## Notable additions & features
 - Ghostty terminal
 - TeamViewer - because RustDesk isn't everywhere yet.
-- VirtualBox - script by [by ettfemnio and Preston Petrie](https://github.com/ettfemnio/bazzite-virtualbox/blob/main/build.sh) using forked reference to monitor changes for security.
+- VirtualBox - script by [by ettfemnio and Preston Petrie](https://github.com/ettfemnio/bazzite-virtualbox/blob/main/build.sh) using indirect reference to monitor changes for security.
 - Pre-installed extra [system packages & flatpaks](https://github.com/arcdablid/phlos/recipes/recipe.yml)
 - Curated list of optional to install [Homebrew formulae, Cargo pkgs, Python pkgs & VSCode extensions](https://github.com/arcdablid/phlos/files/system/usr/share/phlos/index.yml)
 - My [dotfiles](https://github.com/arcdablid/phlos/files/system/usr/share/phlos/dotfiles) should you wish to install them. Will probably move them to their own (chezmoi) repo in the future.

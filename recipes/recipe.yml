@@ -456,6 +456,4 @@ modules:
       # - "ln -sf /usr/bin/ld.bfd /etc/alternatives/ld && ln -sf /etc/alternatives/ld /usr/bin/ld" # example: ld alternatives symlink workaround
     scripts:
       # run files/scripts/virtualbox.sh
-      # - virtualbox.sh
-      # run controlled/monitored version of VirtualBox installation script by ettfemnio and Preston Petrie
-      - "curl -L -o /tmp/vbox.sh \"https://raw.githubusercontent.com/arcdablid/bazzite-virtualbox/refs/heads/main/build.sh\" && chmod +x /tmp/vbox.sh && /tmp/vbox.sh"
+      - virtualbox.sh
