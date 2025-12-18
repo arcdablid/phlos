@@ -94,7 +94,7 @@ done
 executor_path="$(readlink -f "${executor_path}")"
 executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-declare -a required_cmds=( "ANSI_escape_code_variables" "cp" "mkdir" "rm" )
+declare -a required_cmds=( "cp" "mkdir" "rm" )
 
 fail=false
 for rc in "${required_cmds[@]}"; do
@@ -137,9 +137,9 @@ do
 
         -h | --help         )   print_usage && exit 0
                                 shift ;;
-        -s | --source       )   src="${2}"
+        -s | --source       )   src="$(expand_path "${2}")"
                                 shift 2 ;;
-        -d | --destination  )   dst="${2}"
+        -d | --destination  )   dst="$(expand_path "${2}")"
                                 shift 2 ;;
         # -- means the end of the arguments; drop this, and break out of the while loop
         --  )   shift; break ;;

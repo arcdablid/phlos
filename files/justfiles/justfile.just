@@ -133,7 +133,6 @@ phlos-setup-dotfiles:
         print_divider -f '=' -r 80
         for e in "${errors[@]}"; do
             print_msg -x "${executor}" -e -b "'${e}' not present!?"
-            # printf "[${executor}] ${BRed}ERROR${Color_Off} - '%s' not present!?\n" "${e}"
         done
     fi
 
@@ -167,28 +166,40 @@ phlos-setup-flatpaks:
 
     # ------------------------------------------------------------------------------
 
+    print_divider -f '=' -r 80
     mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpaks_user[@]} -gt 0 ]]; then
         echo "Installing user Flatpak apps..."
+        declare -a errors=()
         flatpak remote-modify --user --default-branch=stable flathub
         for f_u in "${flatpaks_user[@]}"; do
-            print_divider -f '=' -r 80
             print_msg -x "${executor}" -i "Installing '${f_u}'"
-            # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${f_u}"
-            flatpak install --user --noninteractive "${f_u}"
+            flatpak install --user --noninteractive "${f_u}" || errors+=("${pip_pkg}")
         done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
     fi
 
+    print_divider -f '=' -r 80
     mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpak_system[@]} -gt 0 ]]; then
         echo "Installing system Flatpak apps..."
+        declare -a errors=()
         flatpak remote-modify --system --default-branch=stable flathub
         for f_s in "${flatpak_system[@]}"; do
-            print_divider -f '=' -r 80
             print_msg -x "${executor}" -i "Installing '${f_s}'"
-            # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${f_s}"
-            flatpak install --system --noninteractive "${f_s}"
+            flatpak install --system --noninteractive "${f_s}" || errors+=("${pip_pkg}")
         done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
     fi
 
 # Install only Homebrew taps & formulae.
@@ -221,23 +232,39 @@ phlos-setup-homebrew:
 
     # ------------------------------------------------------------------------------
 
-    echo "Installing Homebrew Taps & Formulae..."
-
+    print_divider -f '=' -r 80
     mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
-    for h_t in "${homebrew_taps[@]}"; do
-        print_divider -f '=' -r 80
-        print_msg -x "${executor}" -i "Tapping '${h_t}'"
-        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Tapping '%s'\n" "${h_t}"
-        brew tap "${h_t}"
-    done
+    if [[ ${#homebrew_taps[@]} -gt 0 ]]; then
+        echo "Installing Homebrew Taps..."
+        declare -a errors=()
+        for h_t in "${homebrew_taps[@]}"; do
+            print_msg -x "${executor}" -i "Tapping '${h_t}'"
+            brew tap "${h_t}" || errors+=("${pip_pkg}")
+        done
 
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
+    fi
+
+    print_divider -f '=' -r 80
     mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
-    for h_f in "${homebrew_formulae[@]}"; do
-        print_divider -f '=' -r 80
-        print_msg -x "${executor}" -i "Installing '${h_f}'"
-        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${h_f}"
-        brew install --formula "${h_f}"
-    done
+    if [[ ${#homebrew_formulae[@]} -gt 0 ]]; then
+        echo "Installing Homebrew Formulae..."
+        declare -a errors=()
+        for h_f in "${homebrew_formulae[@]}"; do
+            print_msg -x "${executor}" -i "Installing '${h_f}'"
+            brew install --formula "${h_f}" || errors+=("${pip_pkg}")
+        done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
+    fi
 
 
 # Setup only VSCode extensions.
@@ -270,14 +297,22 @@ phlos-setup-vscode-extensions:
 
     # ------------------------------------------------------------------------------
 
-    echo "Installing VSCode Extensions..."
+    print_divider -f '=' -r 80
     mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
-    for v_e in "${vscode_extensions[@]}"; do
-        print_divider -f '=' -r 80
-        print_msg -x "${executor}" -i "Installing '${v_e}'"
-        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${v_e}"
-        code --install-extension "${v_e}"
-    done
+    if [[ ${#vscode_extensions[@]} -gt 0 ]]; then
+        echo "Installing VSCode Extensions..."
+        declare -a errors=()
+        for v_e in "${vscode_extensions[@]}"; do
+            print_msg -x "${executor}" -i "Installing '${v_e}'"
+            code --install-extension "${v_e}" || errors+=("${pip_pkg}")
+        done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
+    fi
 
 # Setup only Cargo pkgs.
 phlos-setup-cargo-pkgs:
@@ -309,14 +344,23 @@ phlos-setup-cargo-pkgs:
 
     # ------------------------------------------------------------------------------
 
-    echo "Installing cargo packages..."
+    print_divider -f '=' -r 80
     mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
-    for cargo_pkg in "${cargo_pkgs[@]}"; do
-        print_divider -f '=' -r 80
-        print_msg -x "${executor}" -i "Installing '${cargo_pkg}'"
-        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${cargo_pkg}"
-        cargo install "${cargo_pkg}" --locked
-    done
+    if [[ ${#cargo_pkgs[@]} -gt 0 ]]; then
+        echo "Installing cargo packages..."
+        declare -a errors=()
+        for cargo_pkg in "${cargo_pkgs[@]}"; do
+            print_msg -x "${executor}" -i "Installing '${cargo_pkg}'"
+            cargo install "${cargo_pkg}" --locked || errors+=("${cargo_pkg}")
+        done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
+    fi
+
 
 # Setup only Python pkgs.
 phlos-setup-pip-pkgs:
@@ -348,14 +392,22 @@ phlos-setup-pip-pkgs:
 
     # ------------------------------------------------------------------------------
 
-    echo "Installing Python packages..."
+    print_divider -f '=' -r 80
     mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
-    for pip_pkg in "${pip_pkgs[@]}"; do
-        print_divider -f '=' -r 80
-        print_msg -x "${executor}" -i "Installing '${pip_pkg}'"
-        # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${pip_pkg}"
-        pip install -U "${pip_pkg}"
-    done
+    if [[ ${#pip_pkgs[@]} -gt 0 ]]; then
+        echo "Installing Python packages..."
+        declare -a errors=()
+        for pip_pkg in "${pip_pkgs[@]}"; do
+            print_msg -x "${executor}" -i "Installing '${pip_pkg}'"
+            pip install -U "${pip_pkg}" || errors+=("${pip_pkg}")
+        done
+
+        if [[ ${#errors[@]} -gt 0 ]]; then
+            print_msg -x "${executor}" -e "${errors[@]}"
+        fi
+    else
+        print_msg -x "${executor}" -i "Nothing to install"
+    fi
 
 
 # Clean up old packages and Docker/Podman images and volumes.

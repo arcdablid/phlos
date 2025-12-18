@@ -148,6 +148,13 @@ def print_msg(*args):
     )
 
     parser.add_argument(
+        "-c",
+        "--combine",
+        action="store_true",
+        help="Combine all inputs into one.",
+    )
+
+    parser.add_argument(
         "inputs",
         metavar="I",
         type=str,
@@ -160,8 +167,6 @@ def print_msg(*args):
     )
 
     args = parser.parse_args()
-
-    msg = " ".join(args.inputs)
 
     output = ""
 
@@ -210,12 +215,18 @@ def print_msg(*args):
             output += f"{ptc.Blue}"
         output += f"[NOTE]{ptc.Color_Off} "
 
-    if args.bold:
-        output += f"{ptc.BWhite}{msg}{ptc.Color_Off}"
+    if args.combine:
+        inputs = [" ".join(args.inputs)]
     else:
-        output += f"{ptc.White}{msg}{ptc.Color_Off}"
+        inputs: list = args.inputs
 
-    print(output)
+    for i in inputs:
+        if args.bold:
+            output += f"{ptc.BWhite}{i}{ptc.Color_Off}"
+        else:
+            output += f"{ptc.White}{i}{ptc.Color_Off}"
+
+        print(output)
 
 
 if __name__ == "__main__":
