@@ -1,5 +1,5 @@
 # Install all phlos curated apps
-phlos-setup-all: phlos-setup-dotfiles phlos-setup-homebrew phlos-setup-vscode-extensions phlos-setup-cargo-pkgs phlos-setup-pip-pkgs
+phlos-setup-all: phlos-setup-dotfiles phlos-setup-flatpaks phlos-setup-homebrew phlos-setup-vscode-extensions phlos-setup-cargo-pkgs phlos-setup-pip-pkgs
 
 export PHLOS_INDEX := "/usr/share/phlos/index.yml"
 
@@ -137,6 +137,60 @@ phlos-setup-dotfiles:
         done
     fi
 
+# Install only Flatpak apps.
+phlos-setup-flatpaks:
+    #!/usr/bin/env bash
+    set -euo pipefail
+
+    # ------------------------------------------------------------------------------
+
+    executor="${0##*/}"
+    executor_path="${BASH_SOURCE}"
+    while [ -L "${executor_path}" ]; do
+        executor_dir="$(cd -P "$(dirname "${executor_path}")" >/dev/null 2>&1 && pwd)"
+        executor_path="$(readlink "${executor_path}")"
+        [[ ${executor_path} != /* ]] && executor_path="${executor_dir}/${executor_path}"
+    done
+    executor_path="$(readlink -f "${executor_path}")"
+    executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
+
+    declare -a required_cmds=( "print_divider" "print_msg" "flatpak" "yq" )
+
+    fail=false
+    for rc in "${required_cmds[@]}"; do
+        if ! command -v "${rc}" &> /dev/null ; then
+            printf "[${executor}] [ERROR] Command '${rc}' unavailable!?"
+            fail=true
+        fi
+    done
+    [[ "${fail}" == true ]] && exit 1
+
+    # ------------------------------------------------------------------------------
+
+    mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${PHLOS_INDEX}" )
+    if [[ ${#flatpaks_user[@]} -gt 0 ]]; then
+        echo "Installing user Flatpak apps..."
+        flatpak remote-modify --user --default-branch=stable flathub
+        for f_u in "${flatpaks_user[@]}"; do
+            print_divider -f '=' -r 80
+            print_msg -x "${executor}" -i "Installing '${f_u}'"
+            # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${f_u}"
+            flatpak install --user --noninteractive "${f_u}"
+        done
+    fi
+
+    mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${PHLOS_INDEX}" )
+    if [[ ${#flatpak_system[@]} -gt 0 ]]; then
+        echo "Installing system Flatpak apps..."
+        flatpak remote-modify --system --default-branch=stable flathub
+        for f_s in "${flatpak_system[@]}"; do
+            print_divider -f '=' -r 80
+            print_msg -x "${executor}" -i "Installing '${f_s}'"
+            # printf "[${executor}] ${BBlue}INFO${Color_Off} - Installing '%s'\n" "${f_s}"
+            flatpak install --system --noninteractive "${f_s}"
+        done
+    fi
+
 # Install only Homebrew taps & formulae.
 phlos-setup-homebrew:
     #!/usr/bin/env bash
@@ -154,7 +208,7 @@ phlos-setup-homebrew:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_msg" "brew" "yq" )
+    declare -a required_cmds=( "print_divider" "print_msg" "brew" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
@@ -203,7 +257,7 @@ phlos-setup-vscode-extensions:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_msg" "code" "yq" )
+    declare -a required_cmds=( "print_divider" "print_msg" "code" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
@@ -242,7 +296,7 @@ phlos-setup-cargo-pkgs:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_msg" "cargo" "yq" )
+    declare -a required_cmds=( "print_divider" "print_msg" "cargo" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
@@ -281,7 +335,7 @@ phlos-setup-pip-pkgs:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_msg" "pip" "yq" )
+    declare -a required_cmds=( "print_divider" "print_msg" "pip" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do

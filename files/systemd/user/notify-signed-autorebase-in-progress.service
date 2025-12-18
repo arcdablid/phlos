@@ -6,7 +6,7 @@ After=network-online.target
 [Service]
 Type=simple
 Restart=on-failure
-RestartSec=1
+RestartSec=2
 ExecStart=/usr/bin/bash -c '/usr/bin/systemctl is-active --quiet phlos-signed-autorebase.service && /usr/bin/notify-send -u critical "System autorebasing in progress!" "System is currently autorebasing to the signed image and will reboot automatically afterwards!"'
 
 [Install]
