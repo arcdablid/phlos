@@ -11,6 +11,13 @@ def print_divider():
     )
 
     parser.add_argument(
+        "-g",
+        "--gaps",
+        action="store_true",
+        help="Add a spacer line before & after the output(s).",
+    )
+
+    parser.add_argument(
         "-f",
         "--filler",
         default="-",
@@ -28,8 +35,12 @@ def print_divider():
 
     args = parser.parse_args()
 
-    print(f"\n{args.filler*args.repetitions}\n")
+    output = f"{args.filler*args.repetitions}"
 
+    if args.gaps:
+        output = f"\n{output}\n"
+
+    print(output)
 
 if __name__ == "__main__":
     print_divider()

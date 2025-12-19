@@ -155,6 +155,13 @@ def print_msg(*args):
     )
 
     parser.add_argument(
+        "-g",
+        "--gaps",
+        action="store_true",
+        help="Add a spacer line before & after the output(s).",
+    )
+
+    parser.add_argument(
         "inputs",
         metavar="I",
         type=str,
@@ -225,6 +232,9 @@ def print_msg(*args):
             output += f"{ptc.BWhite}{i}{ptc.Color_Off}"
         else:
             output += f"{ptc.White}{i}{ptc.Color_Off}"
+
+        if args.gaps:
+            output = f"\n{output}\n"
 
         print(output)
 

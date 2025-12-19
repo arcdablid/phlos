@@ -84,7 +84,7 @@ export On_IPurple := '\033[0;105m'  # Purple
 export On_ICyan := '\033[0;106m'    # Cyan
 export On_IWhite := '\033[0;107m'   # White
 
-# ------------------------------------------------------------------------------
+# ##############################################################################
 
 # Setup dotfiles.
 phlos-setup-dotfiles:
@@ -124,17 +124,18 @@ phlos-setup-dotfiles:
         if [[ ! -e "${src}" ]]; then
             errors+=( "${src}" )
         else
-            print_divider -f '=' -r 80
+            print_divider -g -f '-' -r 80
             deploy -s "${src}" -d "${dst}"
         fi
     done < <( yq e '.deployables[] | [.dst, .src] | @tsv' "${PHLOS_INDEX}" )
 
     if [[ ${#errors[@]} -gt 0 ]]; then
-        print_divider -f '=' -r 80
-        for e in "${errors[@]}"; do
-            print_msg -x "${executor}" -e -b "'${e}' not present!?"
-        done
+        print_divider -g -f '!' -r 80
+        print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
+        print_msg -x "${executor}" -e "${errors[@]}"
     fi
+
+# ##############################################################################
 
 # Install only Flatpak apps.
 phlos-setup-flatpaks:
@@ -166,7 +167,7 @@ phlos-setup-flatpaks:
 
     # ------------------------------------------------------------------------------
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpaks_user[@]} -gt 0 ]]; then
         echo "Installing user Flatpak apps..."
@@ -178,13 +179,15 @@ phlos-setup-flatpaks:
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpak_system[@]} -gt 0 ]]; then
         echo "Installing system Flatpak apps..."
@@ -196,11 +199,15 @@ phlos-setup-flatpaks:
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
+
+# ##############################################################################
 
 # Install only Homebrew taps & formulae.
 phlos-setup-homebrew:
@@ -232,7 +239,7 @@ phlos-setup-homebrew:
 
     # ------------------------------------------------------------------------------
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
     if [[ ${#homebrew_taps[@]} -gt 0 ]]; then
         echo "Installing Homebrew Taps..."
@@ -249,7 +256,7 @@ phlos-setup-homebrew:
         print_msg -x "${executor}" -i "Nothing to install"
     fi
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
     if [[ ${#homebrew_formulae[@]} -gt 0 ]]; then
         echo "Installing Homebrew Formulae..."
@@ -260,12 +267,15 @@ phlos-setup-homebrew:
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
 
+# ##############################################################################
 
 # Setup only VSCode extensions.
 phlos-setup-vscode-extensions:
@@ -297,7 +307,7 @@ phlos-setup-vscode-extensions:
 
     # ------------------------------------------------------------------------------
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
     if [[ ${#vscode_extensions[@]} -gt 0 ]]; then
         echo "Installing VSCode Extensions..."
@@ -308,11 +318,15 @@ phlos-setup-vscode-extensions:
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
+
+# ##############################################################################
 
 # Setup only Cargo pkgs.
 phlos-setup-cargo-pkgs:
@@ -344,23 +358,26 @@ phlos-setup-cargo-pkgs:
 
     # ------------------------------------------------------------------------------
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
     if [[ ${#cargo_pkgs[@]} -gt 0 ]]; then
         echo "Installing cargo packages..."
         declare -a errors=()
         for cargo_pkg in "${cargo_pkgs[@]}"; do
-            print_msg -x "${executor}" -i "Installing '${cargo_pkg}'"
-            cargo install "${cargo_pkg}" --locked || errors+=("${cargo_pkg}")
+            print_msg -x "${executor}" -g -i "Installing '${cargo_pkg}'"
+            cargo install --locked -- "${cargo_pkg}"  || errors+=("${cargo_pkg}")
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
 
+# ##############################################################################
 
 # Setup only Python pkgs.
 phlos-setup-pip-pkgs:
@@ -392,7 +409,7 @@ phlos-setup-pip-pkgs:
 
     # ------------------------------------------------------------------------------
 
-    print_divider -f '=' -r 80
+    print_divider -g -f '=' -r 80
     mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
     if [[ ${#pip_pkgs[@]} -gt 0 ]]; then
         echo "Installing Python packages..."
@@ -403,12 +420,15 @@ phlos-setup-pip-pkgs:
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
+            print_divider -g -f '!' -r 80
+            print_msg -x "${executor}" -g -b "${#errors[@]} errors detected!"
             print_msg -x "${executor}" -e "${errors[@]}"
         fi
     else
         print_msg -x "${executor}" -i "Nothing to install"
     fi
 
+# ##############################################################################
 
 # Clean up old packages and Docker/Podman images and volumes.
 phlos-clean:
@@ -425,13 +445,19 @@ phlos-clean:
     # nix-collect-garbage -d
     # sudo -i nix-collect-garbage -d
 
+# ##############################################################################
+
 # Shortcut to add SMB/CIFS shares.
 phlos-add-rfs:
     /usr/bin/rfs
 
+# ##############################################################################
+
 # Shortcut to remove SMB/CIFS shares.
 phlos-remove-rfs:
     /usr/bin/rfs -r
+
+# ##############################################################################
 
 # Add vboxusers group to system if not there already and current user to it.
 phlos-vboxusers-add-current-user:
@@ -442,6 +468,8 @@ phlos-vboxusers-add-current-user:
     sudo usermod -aG vboxusers $USER
 
     echo "Reboot system for VirtualBox to pick up the group."
+
+# ##############################################################################
 
 # Add syncthing for current user via a quadlet.
 phlos-setup-podman-syncthing:
