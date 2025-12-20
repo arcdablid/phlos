@@ -37,7 +37,6 @@ deployables:
     src: /usr/share/phlos/dotfiles/ox.d/oxrc
 
 cargo:
-  - cloak # A Command Line OTP (One Time Password) Authenticator application. | https://github.com/evansmurithi/cloak
   - wrestic # A backup tool built in Rust that provides a wrapper around Restic, a popular backup program. | https://github.com/alvaro17f/wrestic
   - --git https://github.com/skallwar/suckit # Recursively visit and download a website's content to your disk. | https://github.com/Skallwar/suckit
 

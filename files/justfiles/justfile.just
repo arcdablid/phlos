@@ -116,7 +116,7 @@ phlos-setup-dotfiles:
 
     # ------------------------------------------------------------------------------
 
-    echo "Installing dotfiles..."
+    print_msg -x "${executor}" -g -b "Installing dotfiles..."
 
     declare -a errors=()
 
@@ -171,7 +171,7 @@ phlos-setup-flatpaks:
     print_divider -g -f '=' -r 80
     mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpaks_user[@]} -gt 0 ]]; then
-        echo "Installing user Flatpak apps..."
+        print_msg -x "${executor}" -g -b "Installing user Flatpak apps..."
         declare -a errors=()
         flatpak remote-modify --user --default-branch=stable flathub
         for f_u in "${flatpaks_user[@]}"; do
@@ -191,7 +191,7 @@ phlos-setup-flatpaks:
     print_divider -g -f '=' -r 80
     mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${PHLOS_INDEX}" )
     if [[ ${#flatpak_system[@]} -gt 0 ]]; then
-        echo "Installing system Flatpak apps..."
+        print_msg -x "${executor}" -g -b "Installing system Flatpak apps..."
         declare -a errors=()
         flatpak remote-modify --system --default-branch=stable flathub
         for f_s in "${flatpak_system[@]}"; do
@@ -243,7 +243,7 @@ phlos-setup-homebrew:
     print_divider -g -f '=' -r 80
     mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
     if [[ ${#homebrew_taps[@]} -gt 0 ]]; then
-        echo "Installing Homebrew Taps..."
+        print_msg -x "${executor}" -g -b "Installing Homebrew Taps..."
         declare -a errors=()
         for h_t in "${homebrew_taps[@]}"; do
             print_msg -x "${executor}" -i "Tapping '${h_t}'"
@@ -260,7 +260,7 @@ phlos-setup-homebrew:
     print_divider -g -f '=' -r 80
     mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
     if [[ ${#homebrew_formulae[@]} -gt 0 ]]; then
-        echo "Installing Homebrew Formulae..."
+        print_msg -x "${executor}" -g -b "Installing Homebrew Formulae..."
         declare -a errors=()
         for h_f in "${homebrew_formulae[@]}"; do
             print_msg -x "${executor}" -i "Installing '${h_f}'"
@@ -311,7 +311,7 @@ phlos-setup-vscode-extensions:
     print_divider -g -f '=' -r 80
     mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
     if [[ ${#vscode_extensions[@]} -gt 0 ]]; then
-        echo "Installing VSCode Extensions..."
+        print_msg -x "${executor}" -g -b "Installing VSCode Extensions..."
         declare -a errors=()
         for v_e in "${vscode_extensions[@]}"; do
             print_msg -x "${executor}" -i "Installing '${v_e}'"
@@ -362,11 +362,15 @@ phlos-setup-cargo-pkgs:
     print_divider -g -f '=' -r 80
     mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
     if [[ ${#cargo_pkgs[@]} -gt 0 ]]; then
-        echo "Installing cargo packages..."
+        print_msg -x "${executor}" -g -b "Installing cargo packages..."
         declare -a errors=()
         for cargo_pkg in "${cargo_pkgs[@]}"; do
             print_msg -x "${executor}" -g -i "Installing '${cargo_pkg}'"
-            cargo install --locked "${cargo_pkg}" || errors+=("${cargo_pkg}")
+            if [[ $cargo_pkg == "--git"* ]]; then
+                cargo install "${cargo_pkg}" || errors+=("${cargo_pkg}")
+            else
+                cargo install --locked "${cargo_pkg}" || errors+=("${cargo_pkg}")
+            fi
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
@@ -413,7 +417,7 @@ phlos-setup-pip-pkgs:
     print_divider -g -f '=' -r 80
     mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
     if [[ ${#pip_pkgs[@]} -gt 0 ]]; then
-        echo "Installing Python packages..."
+        print_msg -x "${executor}" -g -b "Installing Python packages..."
         declare -a errors=()
         for pip_pkg in "${pip_pkgs[@]}"; do
             print_msg -x "${executor}" -i "Installing '${pip_pkg}'"
