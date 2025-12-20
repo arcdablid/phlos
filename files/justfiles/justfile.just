@@ -367,7 +367,7 @@ phlos-setup-cargo-pkgs:
         for cargo_pkg in "${cargo_pkgs[@]}"; do
             print_msg -x "${executor}" -g -i "Installing '${cargo_pkg}'"
             if [[ $cargo_pkg == "--git"* ]]; then
-                cargo install "${cargo_pkg}" || errors+=("${cargo_pkg}")
+                cargo install ${cargo_pkg} || errors+=("${cargo_pkg}")
             else
                 cargo install --locked "${cargo_pkg}" || errors+=("${cargo_pkg}")
             fi
