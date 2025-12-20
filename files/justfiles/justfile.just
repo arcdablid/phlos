@@ -366,7 +366,7 @@ phlos-setup-cargo-pkgs:
         declare -a errors=()
         for cargo_pkg in "${cargo_pkgs[@]}"; do
             print_msg -x "${executor}" -g -i "Installing '${cargo_pkg}'"
-            cargo install --locked -- "${cargo_pkg}"  || errors+=("${cargo_pkg}")
+            cargo install --locked "${cargo_pkg}" || errors+=("${cargo_pkg}")
         done
 
         if [[ ${#errors[@]} -gt 0 ]]; then
