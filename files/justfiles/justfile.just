@@ -103,7 +103,7 @@ phlos-setup-dotfiles:
     executor_path="$(readlink -f "${executor_path}")"
     executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-    declare -a required_cmds=( "print_msg" "print_divider" "deploy" "yq" )
+    declare -a required_cmds=( "expand_path" "print_msg" "print_divider" "deploy" "yq" )
 
     fail=false
     for rc in "${required_cmds[@]}"; do
@@ -121,7 +121,8 @@ phlos-setup-dotfiles:
     declare -a errors=()
 
     while IFS=$'\t' read -r dst src _; do
-        if [[ ! -e "${src}" ]]; then
+
+        if [[ ! -e "$( expand_path "${src}" )" ]]; then
             errors+=( "${src}" )
         else
             print_divider -g -f '-' -r 80

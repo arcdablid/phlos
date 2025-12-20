@@ -94,7 +94,7 @@ done
 executor_path="$(readlink -f "${executor_path}")"
 executor_dir="$(cd -P "$(dirname -- "${executor_path}")" >/dev/null 2>&1 && pwd)"
 
-declare -a required_cmds=( "cp" "mkdir" "rm" )
+declare -a required_cmds=( "expand_path" "print_msg" "cp" "mkdir" "rm" )
 
 fail=false
 for rc in "${required_cmds[@]}"; do
@@ -149,7 +149,7 @@ do
     esac
 done
 
-[[ ! -e "${src}" ]] && printf "[${executor}] ${BRed}ERROR${Color_Off} - Source does not exist: %s\n" "${src}" && exit 1
+[[ ! -e "${src}" ]] && print_msg -x "${executor}" -e "Source does not exist: ${src}" && exit 1
 
 # remove old if there
 [[ -e "${dst}" ]] && rm -rfv "${dst}"
