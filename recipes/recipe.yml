@@ -147,6 +147,7 @@ modules:
         - virt-manager
         - virt-viewer
         - virt-install
+        - gnome-boxes
 
         - podman-tui # terminal user interface for Podman
         - podlet # Generate Podman Quadlet files from a Podman command, compose file, or existing object | https://crates.io/crates/podlet
@@ -222,6 +223,8 @@ modules:
       - 1160 # Dash to Panel | https://github.com/home-sweet-gnome/dash-to-panel
       - 1460 # Vitals | https://github.com/corecoding/Vitals
       - 5470 # Weather O'Clock | https://github.com/CleoMenezesJr/weather-oclock
+      - 7065 # Tiling Shell | https://github.com/domferr/tilingshell
+      - 8745 # App Grid Tuner | https://codeberg.org/m-lab/app-grid-tuner
     # uninstall:
     #   - GSConnect # Uninstall step here should be used only for the extensions
     #               # which are not installed through OS package manager in the base image,
