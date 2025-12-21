@@ -562,3 +562,11 @@ phlos-setup-podman-syncthing:
 
     # Start user services even when not logged in
     loginctl enable-linger $USER
+
+# ##############################################################################
+
+# Setup teamviewer background service & launch teamviewer
+phlos-setup-teamviewer:
+    sudo teamviewer daemon enable
+    sudo systemctl enable --now teamviewerd.service
+    teamviewer
