@@ -47,6 +47,7 @@ modules:
       skip-unavailable: true # skip unavailable packages
       packages:
         - NetworkManager-tui
+        - gnome-tweaks
 
         - starship
         - ghostty
