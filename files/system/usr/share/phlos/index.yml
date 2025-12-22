@@ -173,14 +173,19 @@ flatpaks:
     - io.github.alainm23.planify # Project/task manager
 
     - org.gnome.Weather
-    - org.gnome.Geary
+    - org.gnome.SimpleScan
+    - org.gnome.Calculator
+    - org.gnome.Loupe
+    - org.gnome.Snapshot
+    - org.gnome.Showtime
+    - org.gnome.baobab
+    - org.gnome.Maps
 
+    - org.gnome.Papers
     - org.gnome.TextEditor
     - org.libreoffice.LibreOffice
     - org.onlyoffice.desktopeditors
-    - org.gnome.Papers
     - com.github.jeromerobert.pdfarranger
-    - org.gnome.SimpleScan
 
     - io.github.peazip.PeaZip
     - de.leopoldluley.Clapgrep
@@ -212,6 +217,7 @@ flatpaks:
     - org.kde.plasmatube
     - org.nickvision.tubeconverter
 
+
     - com.github.zocker_160.SyncThingy
     - app.drey.Warp
     - org.localsend.localsend_app
@@ -221,6 +227,7 @@ flatpaks:
 
     - org.signal.Signal
     - org.gnome.Fractal # A Matrix messaging app for GNOME written in Rust
+    - org.gnome.Geary
 
     - com.rustdesk.RustDesk
     - io.github.input_leap.input-leap

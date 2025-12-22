@@ -107,6 +107,7 @@ modules:
         - clinfo # Print information about OpenCL platforms and devices | https://github.com/Oblomov/clinfo
         - usbutils # List detailed info about USB devices | http://www.linux-usb.org/
         - pciutils # PCI utilities | https://github.com/pciutils/pciutils
+        - powertop
         - ncdu # NCurses Disk Usage | https://dev.yorhel.nl/ncdu
         - dust # More intuitive version of du in rust | https://github.com/bootandy/dust
         - smartmontools # SMART hard drive monitoring | https://www.smartmontools.org/
