@@ -236,6 +236,7 @@ flatpaks:
     - io.github.justinrdonnelly.bouncer # Bouncer | An application to choose the correct firewall zone for wireless connections.
 
     - org.keepassxc.KeePassXC
+    - com.belmoussaoui.Authenticator
 
     - org.nmap.Zenmap
     - de.swsnr.turnon # Turn On | Conveniently turn on devices in your network, such as a NAS or a gaming console, using Wake On LAN (WoL).
