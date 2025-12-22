@@ -570,3 +570,11 @@ phlos-setup-teamviewer:
     sudo teamviewer daemon enable
     sudo systemctl enable --now teamviewerd.service
     teamviewer
+
+# ##############################################################################
+
+# Setup tailscale and its systray
+phlos-setup-tailscale-systray:
+    tailscale configure systray --enable-startup=systemd
+    systemctl --user daemon-reload
+    systemctl --user enable --now tailscale-systray

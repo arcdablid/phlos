@@ -155,8 +155,10 @@ flatpaks:
   # user:
   #   - example
   system:
+    - com.mattjakeman.ExtensionManager
+    - org.gnome.Extensions
+    - ca.desrt.dconf-editor
     - org.kde.dolphin
-
     - com.github.tchx84.Flatseal
     - io.github.fabrialberio.pinapp
 
@@ -170,8 +172,15 @@ flatpaks:
 
     - io.github.alainm23.planify # Project/task manager
 
+    - org.gnome.Weather
+    - org.gnome.Geary
+
+    - org.gnome.TextEditor
     - org.libreoffice.LibreOffice
+    - org.onlyoffice.desktopeditors
+    - org.gnome.Papers
     - com.github.jeromerobert.pdfarranger
+    - org.gnome.SimpleScan
 
     - io.github.peazip.PeaZip
     - de.leopoldluley.Clapgrep
@@ -217,7 +226,6 @@ flatpaks:
     - io.github.input_leap.input-leap
     - org.deskflow.deskflow
 
-    - org.fkoehler.KTailctl
     - io.github.justinrdonnelly.bouncer # Bouncer | An application to choose the correct firewall zone for wireless connections.
 
     - org.keepassxc.KeePassXC

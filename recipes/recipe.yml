@@ -244,6 +244,7 @@ modules:
         - phlos-signed-autorebase.service
         - podman.socket
         - docker.socket
+        - tailscaled.service
         - phlos-system-autoclean.timer
     #   disabled:
     #     - flatpak-system-update.timer
