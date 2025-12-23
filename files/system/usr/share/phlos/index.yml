@@ -12,7 +12,7 @@ deployables:
     dst: ~/.config/tvnamer/tvnamer.json
     src: /usr/share/phlos/dotfiles/tvnamer.d/tvnamer.json
   -
-    dst: ~/.config/Code/User/keybindings
+    dst: ~/.config/Code/User/keybindings.json
     src: /usr/share/phlos/dotfiles/vscode.d/keybindings.json
   -
     dst: ~/.config/Code/User/settings.json
@@ -35,6 +35,9 @@ deployables:
   -
     dst: ~/.oxrc
     src: /usr/share/phlos/dotfiles/ox.d/oxrc
+  -
+    dst: ~/.config/ghostty/config
+    src: /usr/share/phlos/dotfiles/ghostty.d/config
 
 cargo:
   - wrestic # A backup tool built in Rust that provides a wrapper around Restic, a popular backup program. | https://github.com/alvaro17f/wrestic
@@ -140,8 +143,6 @@ vscode_extensions:
   - thenuprojectcontributors.vscode-nushell-lang
   - tomoki1207.pdf
   - usernamehw.errorlens
-  - visualstudioexptteam.intellicode-api-usage-examples
-  - visualstudioexptteam.vscodeintellicode
   - vscjava.migrate-java-to-azure
   - vscjava.vscode-gradle
   - vscjava.vscode-java-debug
@@ -150,6 +151,13 @@ vscode_extensions:
   - vscjava.vscode-java-test
   - vscjava.vscode-java-upgrade
   - vscjava.vscode-maven
+  - streetsidesoftware.code-spell-checker
+  - streetsidesoftware.code-spell-checker-scientific-terms
+  - streetsidesoftware.code-spell-checker-medical-terms
+  - streetsidesoftware.code-spell-checker-win32
+  - streetsidesoftware.code-spell-checker-greek
+  - streetsidesoftware.code-spell-checker-british-english
+  - IBM.output-colorizer # Syntax highlighting for log files
 
 flatpaks:
   # user:

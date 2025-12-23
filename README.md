@@ -3,6 +3,7 @@
 A custom immutable Linux OS based on [The Bazzite Developer Experience](https://github.com/ublue-os/bazzite-dx) built using [BlueBuild](https://github.com/blue-build/template).
 
 ## Notable additions & features
+
 - Ghostty terminal
 - TeamViewer - because RustDesk isn't everywhere yet.
 - VirtualBox - script by [by ettfemnio and Preston Petrie](https://github.com/ettfemnio/bazzite-virtualbox/blob/main/build.sh) using indirect reference to monitor changes for security.
@@ -61,6 +62,7 @@ A custom immutable Linux OS based on [The Bazzite Developer Experience](https://
   Thusly, `rfs` generates per share systemd `.mount`, `.automount`, `.service` & `.timer` units, along with a journald config file for debugging, a credentials file by default under the `~/.config/rfs` path, and a script run by the `.service` unit which contains the main logic for checking server addresses & availability and acting accordingly - start, refresh or stop things. The `.timer` controls the frequency of how often this process happens. Lastly, a faux-registry file is generated to facilitate easy removal of shares later on. Check `rfs --help` for adjusting some (opinionated) default options.
 
   ### WARNING
+
   **`rfs` is a work in progress and far from perfect! I'm sure there's things that could be coded a lot better and that there's scenarios I haven't tested or accounted for, assuming it's something that could/should be handled at this level. Put succinctly, use at your own risk!**
 
 - Specific `ujust` recipes to auto-setup most of the above & other useful extras:
@@ -82,8 +84,7 @@ A custom immutable Linux OS based on [The Bazzite Developer Experience](https://
 
 To install you need to rebase from an existing atomic Fedora installation.
 
-> [!WARNING]
-> **Rebasing between different desktop environments may cause issues!**
+> [!WARNING] > **Rebasing between different desktop environments may cause issues!**
 
 - First rebase to the unsigned image, to get the proper signing keys and policies installed:
   ```

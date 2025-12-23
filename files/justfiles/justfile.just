@@ -1,7 +1,7 @@
 # Install all phlos curated apps
 phlos-setup-all: phlos-setup-dotfiles phlos-setup-flatpaks phlos-setup-homebrew phlos-setup-vscode-extensions phlos-setup-cargo-pkgs phlos-setup-pip-pkgs
 
-export PHLOS_INDEX := "/usr/share/phlos/index.yml"
+export phlos_INDEX := "/usr/share/phlos/index.yml"
 
 #------------------------------------------------------------------------------
 # ANSI escape code variables.
@@ -128,7 +128,7 @@ phlos-setup-dotfiles:
             print_divider -g -f '-' -r 80
             deploy -s "${src}" -d "${dst}"
         fi
-    done < <( yq e '.deployables[] | [.dst, .src] | @tsv' "${PHLOS_INDEX}" )
+    done < <( yq e '.deployables[] | [.dst, .src] | @tsv' "${phlos_INDEX}" )
 
     if [[ ${#errors[@]} -gt 0 ]]; then
         print_divider -g -f '!' -r 80
@@ -169,7 +169,7 @@ phlos-setup-flatpaks:
     # ------------------------------------------------------------------------------
 
     print_divider -g -f '=' -r 80
-    mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${PHLOS_INDEX}" )
+    mapfile -t flatpaks_user < <( yq eval '.flatpaks.user[]' "${phlos_INDEX}" )
     if [[ ${#flatpaks_user[@]} -gt 0 ]]; then
         print_msg -x "${executor}" -g -b "Installing user Flatpak apps..."
         declare -a errors=()
@@ -189,7 +189,7 @@ phlos-setup-flatpaks:
     fi
 
     print_divider -g -f '=' -r 80
-    mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${PHLOS_INDEX}" )
+    mapfile -t flatpak_system < <( yq eval '.flatpaks.system[]' "${phlos_INDEX}" )
     if [[ ${#flatpak_system[@]} -gt 0 ]]; then
         print_msg -x "${executor}" -g -b "Installing system Flatpak apps..."
         declare -a errors=()
@@ -241,12 +241,12 @@ phlos-setup-homebrew:
     # ------------------------------------------------------------------------------
 
     print_divider -g -f '=' -r 80
-    mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${PHLOS_INDEX}" )
+    print_msg -x "${executor}" -b "Installing Homebrew Taps..."
+    mapfile -t homebrew_taps < <( yq eval '.homebrew.taps[]' "${phlos_INDEX}" )
     if [[ ${#homebrew_taps[@]} -gt 0 ]]; then
-        print_msg -x "${executor}" -g -b "Installing Homebrew Taps..."
         declare -a errors=()
         for h_t in "${homebrew_taps[@]}"; do
-            print_msg -x "${executor}" -i "Tapping '${h_t}'"
+            print_msg -x "${executor}" -g -i "Tapping '${h_t}'"
             brew tap "${h_t}" || errors+=("${pip_pkg}")
         done
 
@@ -258,12 +258,12 @@ phlos-setup-homebrew:
     fi
 
     print_divider -g -f '=' -r 80
-    mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${PHLOS_INDEX}" )
+    print_msg -x "${executor}" -b "Installing Homebrew Formulae..."
+    mapfile -t homebrew_formulae < <( yq eval '.homebrew.formulae[]' "${phlos_INDEX}" )
     if [[ ${#homebrew_formulae[@]} -gt 0 ]]; then
-        print_msg -x "${executor}" -g -b "Installing Homebrew Formulae..."
         declare -a errors=()
         for h_f in "${homebrew_formulae[@]}"; do
-            print_msg -x "${executor}" -i "Installing '${h_f}'"
+            print_msg -x "${executor}" -g -i "Installing '${h_f}'"
             brew install --formula "${h_f}" || errors+=("${pip_pkg}")
         done
 
@@ -309,12 +309,12 @@ phlos-setup-vscode-extensions:
     # ------------------------------------------------------------------------------
 
     print_divider -g -f '=' -r 80
-    mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${PHLOS_INDEX}" )
+    print_msg -x "${executor}" -b "Installing VSCode Extensions..."
+    mapfile -t vscode_extensions < <( yq eval '.vscode_extensions[]' "${phlos_INDEX}" )
     if [[ ${#vscode_extensions[@]} -gt 0 ]]; then
-        print_msg -x "${executor}" -g -b "Installing VSCode Extensions..."
         declare -a errors=()
         for v_e in "${vscode_extensions[@]}"; do
-            print_msg -x "${executor}" -i "Installing '${v_e}'"
+            print_msg -x "${executor}" -g -i "Installing '${v_e}'"
             code --install-extension "${v_e}" || errors+=("${pip_pkg}")
         done
 
@@ -360,9 +360,9 @@ phlos-setup-cargo-pkgs:
     # ------------------------------------------------------------------------------
 
     print_divider -g -f '=' -r 80
-    mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${PHLOS_INDEX}" )
+    print_msg -x "${executor}" -b "Installing cargo packages..."
+    mapfile -t cargo_pkgs < <( yq eval '.cargo[]' "${phlos_INDEX}" )
     if [[ ${#cargo_pkgs[@]} -gt 0 ]]; then
-        print_msg -x "${executor}" -g -b "Installing cargo packages..."
         declare -a errors=()
         for cargo_pkg in "${cargo_pkgs[@]}"; do
             print_msg -x "${executor}" -g -i "Installing '${cargo_pkg}'"
@@ -415,12 +415,12 @@ phlos-setup-pip-pkgs:
     # ------------------------------------------------------------------------------
 
     print_divider -g -f '=' -r 80
-    mapfile -t pip_pkgs < <( yq eval '.pip[]' "${PHLOS_INDEX}" )
+    print_msg -x "${executor}" -b "Installing Python packages..."
+    mapfile -t pip_pkgs < <( yq eval '.pip[]' "${phlos_INDEX}" )
     if [[ ${#pip_pkgs[@]} -gt 0 ]]; then
-        print_msg -x "${executor}" -g -b "Installing Python packages..."
         declare -a errors=()
         for pip_pkg in "${pip_pkgs[@]}"; do
-            print_msg -x "${executor}" -i "Installing '${pip_pkg}'"
+            print_msg -x "${executor}" -g -i "Installing '${pip_pkg}'"
             pip install -U "${pip_pkg}" || errors+=("${pip_pkg}")
         done
 
@@ -469,10 +469,8 @@ phlos-vboxusers-add-current-user:
     #!/usr/bin/env bash
     set -euo pipefail
 
-    sudo groupadd -f vboxusers
     sudo usermod -aG vboxusers $USER
-
-    echo "Reboot system for VirtualBox to pick up the group."
+    echo "Reboot system for VirtualBox to pick up the change."
 
 # ##############################################################################
 
